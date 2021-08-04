@@ -7,6 +7,34 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="ファイル(_F)">
+                    <MenuItem Header="test"/>
+                    <Separator />
+                    <MenuItem Header="終了" Click="exit_click"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
 
+        <Grid Margin="0,20,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="10*"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <TextBox Margin="10,5,0,5" />
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Button Content="検索" Margin="0,5,10,5" Click="Button_Click"/>
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
