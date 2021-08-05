@@ -22,6 +22,7 @@ namespace JellyParfait {
         private void Button_Click(object sender, RoutedEventArgs e) {
             playMusic("https://www.youtube.com/watch?v=yCl53-3qIwY");
         }
+
         private async void playMusic(string youtubeUrl) {
             await Task.Run(() => {
                 using (var player = new WaveOutEvent()) {

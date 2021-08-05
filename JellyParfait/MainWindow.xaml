@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JellyParfait"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="JellyParfait" Height="450" Width="800">
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
@@ -33,6 +33,16 @@
                 </Grid>
                 <Grid Grid.Column="1">
                     <Button Content="検索" Margin="0,5,10,5" Click="Button_Click"/>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1">
+                    <Slider Margin="10,0,10,0"/>
                 </Grid>
             </Grid>
         </Grid>
