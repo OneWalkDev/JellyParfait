@@ -18,7 +18,7 @@
 
         <Grid Margin="0,20,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
 
@@ -28,10 +28,10 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
-                    <TextBox Margin="5,5,0,5" />
+                    <TextBox x:Name="searchTextBox" Margin="10,5,0,5" Text="https://www.youtube.com/watch?v=n46-TfPTrXk" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <Button Content="検索" Margin="0,5,5,5" Click="Button_Click"/>
+                    <Button Content="検索" Margin="0,5,10,5" Click="Button_Click"/>
                 </Grid>
             </Grid>
             <Grid Grid.Row="1">
@@ -46,7 +46,7 @@
                         <RowDefinition Height="10*"/>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-                        <Label x:Name="titleLabel" Content="aaa" VerticalContentAlignment="Center"/>
+                        <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
                     </Grid>
                     <Grid Grid.Row="1">
                         <ListView/>

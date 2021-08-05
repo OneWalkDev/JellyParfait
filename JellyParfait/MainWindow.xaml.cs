@@ -24,7 +24,7 @@ namespace JellyParfait {
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
-            playMusic("https://www.youtube.com/watch");
+            playMusic(searchTextBox.Text);
         }
 
         private async void playMusic(string youtubeUrl) {
@@ -32,19 +32,19 @@ namespace JellyParfait {
                 var uri = getVideoUri(youtubeUrl);
 
                 if (uri == "httpError") {
-                    MessageBox.Show("Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK);
+                    Dispatcher.Invoke(() => MessageBox.Show(this,"Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                     return;
                 }
                 if (uri == "URLFormatError") {
-                    MessageBox.Show("Error\nURLの形式がおかしいです。", "JellyParfait - Error", MessageBoxButton.OK);
+                    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式がおかしいです。", "JellyParfait - Error", MessageBoxButton.OK,MessageBoxImage.Warning));
                     return;
                 }
-                if (uri == "noYoutubeError") {
-                    MessageBox.Show("Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK);
+                if (uri == "noYoutubeURLError") {
+                    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                     return;
                 }
                 if (uri == "unknownError" || uri == string.Empty) {
-                    MessageBox.Show("Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK);
+                    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
                     return;
                 }
 
