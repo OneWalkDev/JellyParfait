@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,9 +23,10 @@ namespace JellyParfait {
         private WaveOutEvent player;
 
         /// <summary>
-        /// 
+        /// 音楽のプレイ状況
         /// </summary>
         private bool play;
+
 
 
 
@@ -68,11 +70,14 @@ namespace JellyParfait {
                 media = new MediaFoundationReader(uri);
                 player.Init(media);
                 player.Volume = 0.5f;
+                Dispatcher.Invoke(() => setTimeSlider(media.TotalTime));
                 play = true;
                 start();
                 while (player.PlaybackState == PlaybackState.Playing) {
                     Thread.Sleep(1000);
+                    Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
                 }
+                play = false;
             });
         }
 
@@ -105,13 +110,25 @@ namespace JellyParfait {
             if (player != null) player.Pause();
         }
 
-        private void setTimeLabel() {
+        private void resetTimeLabel() {
             startLabel.Content = "0:00";
             endLabel.Content = "0:00";
         }
 
-        private void moveSlider() {
-
+        private void setNowTime(TimeSpan time) {
+            var seconds = time.Seconds.ToString();
+            if (time.Seconds < 10) seconds = "0" + seconds;
+            var totalSec = time.Minutes * 60 + time.Seconds;
+            startLabel.Content = time.Minutes.ToString() + ":" + seconds;
+            MusicTimeSlider.Value = totalSec;
         }
+
+        private void setTimeSlider(TimeSpan totalTime) {
+            endLabel.Content = totalTime.Minutes + ":" + totalTime.Seconds;
+            var totalSec = totalTime.Minutes * 60 + totalTime.Seconds;
+            MusicTimeSlider.Value = 0;
+            MusicTimeSlider.Maximum = totalSec;
+        }
+
     }
 }

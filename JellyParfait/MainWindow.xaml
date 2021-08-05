@@ -67,13 +67,12 @@
                             <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
                         </Grid>
                         <Grid Grid.Column="2">
-                            <Slider Margin="10,0,10,0"/>
+                            <Slider x:Name="MusicTimeSlider" Margin="10,0,10,0" Minimum="0"/>
                         </Grid>
                         <Grid Grid.Column="3">
                             <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>
                         </Grid>
                     </Grid>
-                    
                 </Grid>
             </Grid>
         </Grid>
