@@ -11,9 +11,22 @@ namespace JellyParfait {
     /// </summary>
     public partial class MainWindow : Window {
 
-        MediaFoundationReader media;
+        /// <summary>
+        /// 音楽の情報
+        /// </summary>
+        private MediaFoundationReader media;
 
-        WaveOutEvent player;
+        /// <summary>
+        /// プレイヤー
+        /// </summary>
+        private WaveOutEvent player;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private bool play;
+
+
 
         public MainWindow() {
             InitializeComponent();
@@ -36,7 +49,7 @@ namespace JellyParfait {
                     return;
                 }
                 if (uri == "URLFormatError") {
-                    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式がおかしいです。", "JellyParfait - Error", MessageBoxButton.OK,MessageBoxImage.Warning));
+                    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。", "JellyParfait - Error", MessageBoxButton.OK,MessageBoxImage.Warning));
                     return;
                 }
                 if (uri == "noYoutubeURLError") {
@@ -48,10 +61,14 @@ namespace JellyParfait {
                     return;
                 }
 
+                if(media != null && play) {
+                    player.Stop();
+                }
                 player = new WaveOutEvent();
                 media = new MediaFoundationReader(uri);
                 player.Init(media);
                 player.Volume = 0.5f;
+                play = true;
                 start();
                 while (player.PlaybackState == PlaybackState.Playing) {
                     Thread.Sleep(1000);
@@ -63,8 +80,6 @@ namespace JellyParfait {
             var youTube = YouTube.Default;
             try {
                 var video = youTube.GetVideo(youtubeUrl);
-                Debug.Print(video.Uri);
-                Debug.Print(video.Info.ToString());
                 Dispatcher.Invoke(() => titleLabel.Content = "Now Playing : " + video.Title);
                 return video.Uri;
             } catch (System.Net.Http.HttpRequestException){
