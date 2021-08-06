@@ -93,7 +93,6 @@ namespace JellyParfait {
         }
 
         private string getVideoUri(string youtubeUrl) {
-
             try {
                 quere.Add(getYoutubeData(youtubeUrl).Result);
                 Dispatcher.Invoke(() => {
