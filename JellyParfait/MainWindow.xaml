@@ -49,7 +49,30 @@
                         <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
                     </Grid>
                     <Grid Grid.Row="1">
-                        <ListView/>
+                        <ListView x:Name="MusicQuere">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition Width="20*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <StackPanel>
+                                                <Button Content="▶"  Width="20" Height="20" Command="{Binding ClickCommand}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Grid.Column="1">
+                                            <TextBlock Text="   " FontSize="13"/>
+                                        </Grid>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Grid>
                     
                 </Grid>

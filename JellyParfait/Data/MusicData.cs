@@ -4,15 +4,23 @@ namespace JellyParfait.Data {
 
     class MusicData {
 
+        private MainWindow main;
+
+        public MusicData(MainWindow main) {
+            this.main = main;
+        }
+
         public string Title { get; set; }
 
         public string Uri { get; set; }
 
 
+
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
-                    var a = 1;
+                    main.playMusic(Uri);
+                    main.changeTitle(Title);
                 });
             }
         }
