@@ -25,13 +25,13 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="6*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <TextBox x:Name="searchTextBox" Margin="10,5,0,5" Text="https://www.youtube.com/watch?v=n46-TfPTrXk" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <Button Content="検索" Margin="0,5,10,5" Click="Button_Click"/>
+                    <Button Content="追加" Margin="0,5,10,5" Click="Button_Click"/>
                 </Grid>
             </Grid>
             <Grid Grid.Row="1">
@@ -67,7 +67,7 @@
                             <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
                         </Grid>
                         <Grid Grid.Column="2">
-                            <Slider x:Name="MusicTimeSlider" Margin="10,0,10,0" Minimum="0"/>
+                            <Slider x:Name="MusicTimeSlider" Margin="10,0,10,0" Minimum="0" />
                         </Grid>
                         <Grid Grid.Column="3">
                             <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>

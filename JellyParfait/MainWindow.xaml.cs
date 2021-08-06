@@ -1,10 +1,13 @@
-﻿using NAudio.Wave;
+﻿using JellyParfait.Data;
+using NAudio.Wave;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using VideoLibrary;
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 
 namespace JellyParfait {
     /// <summary>
@@ -27,7 +30,7 @@ namespace JellyParfait {
         /// </summary>
         private bool play;
 
-
+        private List<MusicData> quere;
 
 
         public MainWindow() {
@@ -39,13 +42,13 @@ namespace JellyParfait {
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
-            playMusic(searchTextBox.Text);
+            addQuere(searchTextBox.Text);
         }
 
-        private async void playMusic(string youtubeUrl) {
+        private async void addQuere(string youtubeUrl) {
             await Task.Run(() => {
                 var uri = getVideoUri(youtubeUrl);
-
+                
                 if (uri == "httpError") {
                     Dispatcher.Invoke(() => MessageBox.Show(this,"Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                     return;
@@ -70,6 +73,7 @@ namespace JellyParfait {
                 media = new MediaFoundationReader(uri);
                 player.Init(media);
                 player.Volume = 0.5f;
+                Dispatcher.Invoke(() => resetTime());
                 Dispatcher.Invoke(() => setTimeSlider(media.TotalTime));
                 play = true;
                 start();
@@ -81,21 +85,34 @@ namespace JellyParfait {
             });
         }
 
+
         private string getVideoUri(string youtubeUrl) {
-            var youTube = YouTube.Default;
+
             try {
-                var video = youTube.GetVideo(youtubeUrl);
-                Dispatcher.Invoke(() => titleLabel.Content = "Now Playing : " + video.Title);
-                return video.Uri;
-            } catch (System.Net.Http.HttpRequestException){
+                var musicdata = new List<MusicData>();
+                musicdata.Add(getYoutubeData(youtubeUrl).Result);
+                Dispatcher.Invoke(() => titleLabel.Content = "Now Playing : " + musicdata[0].Title);
+                return musicdata[0].Uri;
+            } catch (System.Net.Http.HttpRequestException) {
                 return "httpError";
-            } catch (VideoLibrary.Exceptions.UnavailableStreamException) {
-                return "URLFormatError";
-            } catch (System.ArgumentException) {
+            } catch (ArgumentException) {
                 return "noYoutubeURLError";
             } catch {
                 return "unknownError";
             }
+        }
+
+        private async Task<MusicData> getYoutubeData(string youtubeUrl) {
+            var youtubeClient = new YoutubeClient();
+            var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
+            var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
+            var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+            var url = streamInfo.Url;
+            Debug.Print(url);
+            var data = new MusicData();
+            data.Title = video.Title;
+            data.Uri = streamInfo.Url;
+            return data;
         }
 
         private void start() {
@@ -110,9 +127,12 @@ namespace JellyParfait {
             if (player != null) player.Pause();
         }
 
-        private void resetTimeLabel() {
+        private void resetTime() {
             startLabel.Content = "0:00";
             endLabel.Content = "0:00";
+            MusicTimeSlider.Value = 0;
+            MusicTimeSlider.Minimum = MusicTimeSlider.Maximum = 0;
+
         }
 
         private void setNowTime(TimeSpan time) {
