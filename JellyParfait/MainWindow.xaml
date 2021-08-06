@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="JellyParfait" Height="450" Width="800">
+        Title="JellyParfait" Height="500" Width="800">
 
     <Grid>
         <DockPanel>
@@ -80,21 +80,49 @@
                 
                 <Grid Grid.Row="1">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="0.1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Grid.Column="1">
-                            <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="0.2*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.1*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="0.1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="1">
+                                <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <Grid Grid.Column="2">
+                                <Slider x:Name="MusicTimeSlider" Margin="10,0,10,0" Minimum="0" />
+                            </Grid>
+                            <Grid Grid.Column="3">
+                                <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>
+                            </Grid>
                         </Grid>
-                        <Grid Grid.Column="2">
-                            <Slider x:Name="MusicTimeSlider" Margin="10,0,10,0" Minimum="0" />
-                        </Grid>
-                        <Grid Grid.Column="3">
-                            <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="10*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="1">
+                                <Button Content="&lt;&lt;"/>
+                            </Grid>
+                            <Grid Grid.Column="3">
+                                <Button Content="▶"/>
+                            </Grid>
+                            <Grid Grid.Column="5">
+                                <Button Content=">>"/>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

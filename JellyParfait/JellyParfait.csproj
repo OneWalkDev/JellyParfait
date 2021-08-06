@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>JellyParfait_alpha 256x256.ico</ApplicationIcon>
+    <ApplicationIcon>Resources/JellyParfait_alpha 64x64.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

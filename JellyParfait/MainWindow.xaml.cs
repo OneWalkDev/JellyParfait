@@ -73,6 +73,7 @@ namespace JellyParfait {
 
         public async void playMusic(string googlevideo) {
             await Task.Run(() => {
+                var time = new TimeSpan(0, 0, 0);
                 if (media != null && play) {
                     player.Stop();
                 }
@@ -85,8 +86,37 @@ namespace JellyParfait {
                 play = true;
                 start();
                 while (player.PlaybackState == PlaybackState.Playing) {
-                    Thread.Sleep(1000);
-                    Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
+                    Thread.Sleep(200);
+                    if(time != media.CurrentTime) {
+                        Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
+                        time = media.CurrentTime;
+                    }
+                }
+                play = false;
+            });
+        }
+
+        public async void playMusic(string googlevideo,TimeSpan timeSpan) {
+            await Task.Run(() => {
+                var time = new TimeSpan(0, 0, 0);
+                if (media != null && play) {
+                    player.Stop();
+                }
+                player = new WaveOutEvent();
+                media = new MediaFoundationReader(googlevideo);
+                player.Init(media);
+                player.Volume = 0.5f;
+                media.CurrentTime = timeSpan;
+                Dispatcher.Invoke(() => resetTime());
+                Dispatcher.Invoke(() => setTimeSlider(media.TotalTime));
+                play = true;
+                start();
+                while (player.PlaybackState == PlaybackState.Playing) {
+                    Thread.Sleep(200);
+                    if (time != media.CurrentTime) {
+                        Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
+                        time = media.CurrentTime;
+                    }
                 }
                 play = false;
             });
@@ -127,7 +157,10 @@ namespace JellyParfait {
         }
 
         private void start() {
-            if (player != null) player.Play();
+            if (player != null) {
+                player.Play();
+            }
+           
         }
 
         private void stop() {
@@ -135,7 +168,10 @@ namespace JellyParfait {
         }
 
         private void pause() {
-            if (player != null) player.Pause();
+            if (player != null) {
+                player.Pause();
+                play = false;
+            }
         }
 
         private void resetTime() {
