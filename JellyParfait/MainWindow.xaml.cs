@@ -62,20 +62,20 @@ namespace JellyParfait {
             await Task.Run(() => musicData = getVideoObject(youtubeUrl).Result);
 
             if (musicData == null) return;
-            if (musicData.Uri == string.Empty) return;
-            if (quere.Exists(x=>x.Title==musicData.Title)) {
+            if (musicData.Url == string.Empty) return;
+            if (quere.Exists(x=>x.YoutubeUrl==musicData.YoutubeUrl)) {
                 var msgbox = MessageBox.Show(this, "すでにその曲は存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (msgbox == MessageBoxResult.No) return;
             }
 
-            Debug.Print(musicData.Uri);
+            Debug.Print(musicData.Url);
 
             quere.Add(musicData);
 
             MusicQuere.ItemsSource = null;
             MusicQuere.ItemsSource = quere;
            
-            playMusic(musicData.Uri);
+            playMusic(musicData.Url);
         }
 
         public async void playMusic(string googlevideo) {
@@ -133,17 +133,18 @@ namespace JellyParfait {
         }
 
         private async Task<MusicData> getVideoObject(string youtubeUrl) {
-        try {
-            var youtubeClient = new YoutubeClient();
-            var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
-            var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
-            var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
-            var url = streamInfo.Url;
-            Debug.Print(url);
-            var data = new MusicData(this);
-            data.Title = video.Title;
-            data.Uri = streamInfo.Url;
-            return data;
+            try {
+                var youtubeClient = new YoutubeClient();
+                var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
+                var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
+                var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+                var url = streamInfo.Url;
+                Debug.Print(url);
+                var data = new MusicData(this);
+                data.Title = video.Title;
+                data.Url = streamInfo.Url;
+                data.YoutubeUrl = youtubeUrl;
+                return data;
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;

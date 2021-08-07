@@ -12,14 +12,14 @@ namespace JellyParfait.Data {
 
         public string Title { get; set; }
 
-        public string Uri { get; set; }
+        public string Url { get; set; }
 
-
+        public string YoutubeUrl { get; set; }
 
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
-                    main.playMusic(Uri);
+                    main.playMusic(Url);
                     main.changeTitle(Title);
                 });
             }
