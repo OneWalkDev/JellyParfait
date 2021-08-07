@@ -45,30 +45,29 @@ namespace JellyParfait {
             addQuere(searchTextBox.Text);
         }
 
+        private void PlayButton_Click(object sender, RoutedEventArgs e) {
+
+        }
+
         private async void addQuere(string youtubeUrl) {
-            string uri = "";
-            await Task.Run(() => {
-                uri = getVideoUri(youtubeUrl);
-            });
+            MusicData musicData = null;
+            await Task.Run(() => musicData = getVideoObject(youtubeUrl).Result);
 
-            if (uri == "httpError") {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
-                return;
-            }
-            if (uri == "URLFormatError") {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
-                return;
-            }
-            if (uri == "noYoutubeURLError") {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
-                return;
-            }
-            if (uri == "unknownError" || uri == string.Empty) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
-                return;
+            if (musicData == null) return;
+            if (musicData.Uri == string.Empty) return;
+            if (quere.Exists(x=>x.Title==musicData.Title)) {
+                var msgbox = MessageBox.Show(this, "すでにその曲は存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (msgbox == MessageBoxResult.No) return;
             }
 
-            playMusic(uri);
+            Debug.Print(musicData.Uri);
+
+            quere.Add(musicData);
+
+            MusicQuere.ItemsSource = null;
+            MusicQuere.ItemsSource = quere;
+           
+            playMusic(musicData.Uri);
         }
 
         public async void playMusic(string googlevideo) {
@@ -81,13 +80,16 @@ namespace JellyParfait {
                 media = new MediaFoundationReader(googlevideo);
                 player.Init(media);
                 player.Volume = 0.5f;
-                Dispatcher.Invoke(() => resetTime());
-                Dispatcher.Invoke(() => setTimeSlider(media.TotalTime));
+                Dispatcher.Invoke(() => {
+                    resetTime();
+                    setTimeSlider(media.TotalTime);
+                    changeTitle(quere[quere.Count - 1].Title);
+                });
                 play = true;
                 start();
                 while (player.PlaybackState == PlaybackState.Playing) {
                     Thread.Sleep(200);
-                    if(time != media.CurrentTime) {
+                    if (time != media.CurrentTime) {
                         Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
                         time = media.CurrentTime;
                     }
@@ -122,28 +124,8 @@ namespace JellyParfait {
             });
         }
 
-        private string getVideoUri(string youtubeUrl) {
-            try {
-                quere.Add(getYoutubeData(youtubeUrl).Result);
-                Dispatcher.Invoke(() => {
-                    changeTitle(quere[quere.Count-1].Title);
-                    MusicQuere.ItemsSource = null;
-                    MusicQuere.ItemsSource = quere;
-                });
-                return quere[quere.Count - 1].Uri;
-            } catch (System.Net.Http.HttpRequestException) {
-                return "httpError";
-            } catch (ArgumentException) {
-                return "noYoutubeURLError";
-            } catch (AggregateException) {
-                return "URLFormatError";
-            } catch {
-                return "unknownError";
-            }
-
-        }
-
-        private async Task<MusicData> getYoutubeData(string youtubeUrl) {
+        private async Task<MusicData> getVideoObject(string youtubeUrl) {
+        try {
             var youtubeClient = new YoutubeClient();
             var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
             var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
@@ -154,6 +136,19 @@ namespace JellyParfait {
             data.Title = video.Title;
             data.Uri = streamInfo.Url;
             return data;
+            } catch (System.Net.Http.HttpRequestException) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                return null;
+            } catch (ArgumentException) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                return null;
+            } catch (AggregateException) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                return null;
+            } catch {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
+                return null;
+            }
         }
 
         private void start() {
@@ -201,5 +196,6 @@ namespace JellyParfait {
             MusicTimeSlider.Maximum = totalSec;
         }
 
+       
     }
 }
