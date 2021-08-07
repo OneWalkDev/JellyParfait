@@ -117,17 +117,17 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="1">
-                                <Button  Click="PrevButton_Click"  >
+                                <Button  Click="PrevButton_Click" BorderBrush="{x:Null}" Background="#F0F0F0" >
                                     <DynamicResource ResourceKey="Prev"/>
                                 </Button>
                             </Grid>
                             <Grid Grid.Column="3">
-                                <Button  Click="PlayButton_Click"  >
+                                <Button  Click="PlayButton_Click"  BorderBrush="{x:Null}" Background="#F0F0F0">
                                     <DynamicResource ResourceKey="Play"/>
                                 </Button>
                             </Grid>
                             <Grid Grid.Column="5">
-                                <Button  Click="NextButton_Click"  >
+                                <Button  Click="NextButton_Click"  BorderBrush="{x:Null}" Background="#F0F0F0">
                                     <DynamicResource ResourceKey="Next"/>
                                 </Button>
                             </Grid>

@@ -46,7 +46,7 @@ namespace JellyParfait {
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e) {
-          
+            
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e) {
@@ -205,12 +205,5 @@ namespace JellyParfait {
             MusicTimeSlider.Maximum = totalSec;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e) {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e) {
-
-        }
     }
 }
