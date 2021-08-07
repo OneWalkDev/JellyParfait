@@ -5,6 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="JellyParfait" Height="500" Width="800">
+    <Window.Resources>
+        <Image x:Key="Play" Source="/Resources/play.png"/>
+        <Image x:Key="Pause" Source="/Resources/pause.png"/>
+        <Image x:Key="Prev" Source="/Resources/prev.png"/>
+        <Image x:Key="Next" Source="/Resources/next.png"/>
+    </Window.Resources>
 
     <Grid>
         <DockPanel>
@@ -111,13 +117,19 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="1">
-                                <Button Content="&lt;&lt;"/>
+                                <Button  Click="PrevButton_Click"  >
+                                    <DynamicResource ResourceKey="Prev"/>
+                                </Button>
                             </Grid>
                             <Grid Grid.Column="3">
-                                <Button Content="▶" Click="PlayButton_Click"/>
+                                <Button  Click="PlayButton_Click"  >
+                                    <DynamicResource ResourceKey="Play"/>
+                                </Button>
                             </Grid>
                             <Grid Grid.Column="5">
-                                <Button Content=">>"/>
+                                <Button  Click="NextButton_Click"  >
+                                    <DynamicResource ResourceKey="Next"/>
+                                </Button>
                             </Grid>
                         </Grid>
                     </Grid>
