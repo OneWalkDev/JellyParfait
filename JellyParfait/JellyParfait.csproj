@@ -5,13 +5,21 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources/JellyParfait_alpha 64x64.ico</ApplicationIcon>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\JellyParfait_alpha 64x64.ico" />
     <None Remove="Resources\next.png" />
     <None Remove="Resources\pause.png" />
     <None Remove="Resources\play.png" />
     <None Remove="Resources\prev.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\JellyParfait_alpha 64x64.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

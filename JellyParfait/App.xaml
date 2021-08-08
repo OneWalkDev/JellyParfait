@@ -1,8 +1,7 @@
 ﻿<Application x:Class="JellyParfait.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:JellyParfait"
-             StartupUri="MainWindow.xaml">
+             Startup="Application_Startup">
     <Application.Resources>
         <Style x:Key="ContainerStyle" TargetType="ListViewItem" >
             <Setter Property="Template">
