@@ -73,9 +73,13 @@ namespace JellyParfait {
 
         private void next() {
             if (nowQuere == -1) return;
-            if (quere.Count <= nowQuere + 1) return;
+            if (quere.Count <= nowQuere + 1) {
+                nowQuere=0;
+            } else {
+                nowQuere++;
+            }
             player.Dispose();
-            nowQuere++;
+            
             playMusic(quere[nowQuere].Url);
         }
 
