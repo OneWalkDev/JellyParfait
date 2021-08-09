@@ -10,6 +10,8 @@ namespace JellyParfait.Data {
             this.main = main;
         }
 
+        public string PlayButton{ get; set; }
+
         public string Title { get; set; }
 
         public string Url { get; set; }

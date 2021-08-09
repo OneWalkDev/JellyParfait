@@ -37,6 +37,7 @@ namespace JellyParfait {
 
         private int nowQuere = -1;
 
+
         public MainWindow() {
             InitializeComponent(); 
         }
@@ -55,11 +56,27 @@ namespace JellyParfait {
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e) {
+            prev();
+        }
 
+        private void prev() {
+            if (nowQuere <= 0) return;
+            if (quere.Count == 0) return;
+            player.Dispose();
+            nowQuere--;
+            playMusic(quere[nowQuere].Url);
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e) {
+            next();
+        }
 
+        private void next() {
+            if (nowQuere == -1) return;
+            if (quere.Count <= nowQuere + 1) return;
+            player.Dispose();
+            nowQuere++;
+            playMusic(quere[nowQuere].Url);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -111,9 +128,10 @@ namespace JellyParfait {
             MusicQuere.ItemsSource = null;
             MusicQuere.ItemsSource = quere;
 
-            nowQuere = 0;
-            playMusic(musicData.Url);
-            MusicQuere.SelectedIndex = nowQuere;
+            if (quere.Count == 1) {
+                nowQuere = 0;
+                playMusic(musicData.Url);
+            }
         }
 
         public async void playMusic(string googlevideo) {
@@ -129,12 +147,12 @@ namespace JellyParfait {
             Dispatcher.Invoke(() => {
                 resetTime();
                 setTimeSlider(media.TotalTime);
-                changeTitle(quere[quere.Count - 1].Title);
+                changeTitle(quere[nowQuere].Title);
             });
 
             start();
             while (player.PlaybackState == PlaybackState.Playing) {
-                Thread.Sleep(2);
+                Thread.Sleep(200);
                 if (sliderClick) continue;
                 if (time != media.CurrentTime) {
                     Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
@@ -143,30 +161,7 @@ namespace JellyParfait {
                     }
                 }
             });
-        }
-
-        public async void playMusic(string googlevideo,TimeSpan timeSpan) {
-            await Task.Run(() => {
-                var time = new TimeSpan(0, 0, 0);
-                player = new WaveOutEvent();
-                media = new MediaFoundationReader(googlevideo);
-                player.Init(media);
-                player.Volume = 0.5f;
-                media.CurrentTime = timeSpan;
-                Dispatcher.Invoke(() => resetTime());
-                Dispatcher.Invoke(() => setTimeSlider(media.TotalTime));
-                
-                start();
-                while (player.PlaybackState == PlaybackState.Playing) {
-                    Thread.Sleep(200);
-                    if (sliderClick) continue;
-                    if (time != media.CurrentTime) {
-                        Dispatcher.Invoke(() => setNowTime(media.CurrentTime));
-                        time = media.CurrentTime;
-                    }
-                }
-
-            });
+            next();
         }
 
         private async Task<MusicData> getVideoObject(string youtubeUrl) {
@@ -180,6 +175,7 @@ namespace JellyParfait {
                 data.Title = video.Title;
                 data.Url = streamInfo.Url;
                 data.YoutubeUrl = youtubeUrl;
+                
                 return data;
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
