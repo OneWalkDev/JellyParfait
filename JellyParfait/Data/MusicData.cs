@@ -1,14 +1,17 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using System.Diagnostics;
 
 namespace JellyParfait.Data {
 
-    class MusicData {
+    public class MusicData {
 
         private MainWindow main;
 
         public MusicData(MainWindow main) {
             this.main = main;
         }
+
+        public int QuereId { get; set; }
 
         public string PlayButton{ get; set; }
 
@@ -21,8 +24,10 @@ namespace JellyParfait.Data {
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
-                    main.playMusic(Url);
-                    main.changeTitle(Title);
+                    main.SetQuere(QuereId);
+                    Debug.Print(QuereId.ToString());
+                    main.PlayMusic(this);
+                    main.ChangeTitle(Title);
                 });
             }
         }

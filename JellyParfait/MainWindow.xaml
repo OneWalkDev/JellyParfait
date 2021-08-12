@@ -19,7 +19,7 @@
                 <MenuItem Header="ファイル(_F)">
                     <MenuItem Header="test"/>
                     <Separator />
-                    <MenuItem Header="終了" Click="exit_click"/>
+                    <MenuItem Header="終了" Click="Exit_click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
