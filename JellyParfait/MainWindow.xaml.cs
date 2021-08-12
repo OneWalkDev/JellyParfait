@@ -54,19 +54,29 @@ namespace JellyParfait {
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e) {
-            
+            if (Clicked) return;
+            if (player == null) return;
+            if (IsPlay()) {
+                Pause();
+            } else {
+                Play();
+            }
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e) {
             Prev();
         }
 
-        private void Prev() {
+        private async void Prev() {
+            if (Clicked) return;
             if (nowQuere <= 0) return;
             if (quere.Count == 0) return;
+            Clicked = true;
             player.Dispose();
             nowQuere--;
             PlayMusic(quere[nowQuere]);
+            await Task.Run(() => Thread.Sleep(1500));
+            Clicked = false;
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e) {
@@ -84,7 +94,7 @@ namespace JellyParfait {
             }
             Debug.Print(nowQuere.ToString());
             PlayMusic(quere[nowQuere]);
-            await Task.Run(() => Thread.Sleep(1000));
+            await Task.Run(() => Thread.Sleep(1500));
             Clicked = false;
         }
 
@@ -150,6 +160,7 @@ namespace JellyParfait {
                     media.Dispose();
                 }
             });
+            PlayButton.Content = Resources["Pause"];
             await Task.Run(() => {
                 player = new WaveOutEvent();
                 media = new MediaFoundationReader(data.Url);
@@ -162,10 +173,10 @@ namespace JellyParfait {
                     ChangeTitle(quere[nowQuere].Title);
                 });
                 var time = new TimeSpan(0, 0, 0);
-                Start();
+                AsyncPlay();
                 while (true) {
 
-                    Thread.Sleep(1);
+                    Thread.Sleep(200);
                     
                     if (player == null) break;
                     if (player.PlaybackState != PlaybackState.Playing) break;
@@ -177,8 +188,8 @@ namespace JellyParfait {
                     }
                 }
             });
-            Debug.Print(Clicked.ToString());
-            Next();
+            
+            if(player.PlaybackState != PlaybackState.Paused) Next();
         }
 
         private async Task<MusicData> GetVideoObject(string youtubeUrl) {
@@ -209,8 +220,17 @@ namespace JellyParfait {
             }
         }
 
-        private void Start() {
-            if (player != null)  player.Play();     
+        private void AsyncPlay() {
+            if (player != null) {
+                player.Play();
+            }
+        }
+
+        private void Play() {
+            if (player != null) {
+                player.Play();
+                PlayButton.Content = Resources["Pause"];
+            }
         }
 
         private void Stop() {
@@ -218,7 +238,10 @@ namespace JellyParfait {
         }
 
         private void Pause() {
-            if (player != null) player.Pause();
+            if (player != null) {
+                player.Pause();
+                PlayButton.Content = Resources["Play"];
+            }
         }
 
         private void ResetTime() {

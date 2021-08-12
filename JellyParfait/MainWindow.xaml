@@ -123,7 +123,7 @@
                                 </Button>
                             </Grid>
                             <Grid Grid.Column="3">
-                                <Button  Click="PlayButton_Click"  BorderBrush="{x:Null}" Background="#F0F0F0">
+                                <Button x:Name="PlayButton" Click="PlayButton_Click"  BorderBrush="{x:Null}" Background="#F0F0F0">
                                     <DynamicResource ResourceKey="Play"/>
                                 </Button>
                             </Grid>
