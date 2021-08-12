@@ -40,6 +40,8 @@ namespace JellyParfait {
 
         private bool Clicked;
 
+        private bool Complete;
+
         public MainWindow() {
             InitializeComponent(); 
         }
@@ -69,13 +71,20 @@ namespace JellyParfait {
 
         private async void Prev() {
             if (Clicked) return;
-            if (nowQuere <= 0) return;
             if (quere.Count == 0) return;
             Clicked = true;
             player.Dispose();
-            nowQuere--;
+            if (nowQuere == 0) {
+                nowQuere = quere.Count - 1;
+            } else {
+                nowQuere--;
+            }
             PlayMusic(quere[nowQuere]);
-            await Task.Run(() => Thread.Sleep(1500));
+            await Task.Run(() => {
+                while (!Complete) {
+                    Thread.Sleep(500);
+                }
+            });
             Clicked = false;
         }
 
@@ -86,15 +95,20 @@ namespace JellyParfait {
         private async void Next() {
             if (Clicked) return;
             if (nowQuere == -1) return;
+            if (quere.Count == 0) return;
             Clicked = true;
             if (quere.Count <= nowQuere + 1) {
-                nowQuere=0;
+                nowQuere = 0;
             } else {
                 nowQuere++;
             }
             Debug.Print(nowQuere.ToString());
             PlayMusic(quere[nowQuere]);
-            await Task.Run(() => Thread.Sleep(1500));
+            await Task.Run(() => {
+                while (!Complete) {
+                    Thread.Sleep(100);
+                }
+            });
             Clicked = false;
         }
 
@@ -154,6 +168,7 @@ namespace JellyParfait {
         }
 
         public async void PlayMusic(MusicData data) {
+            Complete = false;
             await Task.Run(() => {
                 if (player != null) {
                     player.Dispose();
@@ -174,6 +189,7 @@ namespace JellyParfait {
                 });
                 var time = new TimeSpan(0, 0, 0);
                 AsyncPlay();
+                Complete = true;
                 while (true) {
 
                     Thread.Sleep(200);
@@ -188,7 +204,6 @@ namespace JellyParfait {
                     }
                 }
             });
-            
             if(player.PlaybackState != PlaybackState.Paused) Next();
         }
 
@@ -265,7 +280,9 @@ namespace JellyParfait {
         }
          
         private void SetTimeSlider(TimeSpan totalTime) {
-            endLabel.Content = totalTime.Minutes + ":" + totalTime.Seconds;
+            var seconds = totalTime.Seconds.ToString();
+            if (totalTime.Seconds < 10) seconds = "0" + seconds;
+            endLabel.Content = totalTime.Minutes + ":" + seconds;
             var totalSec = totalTime.Minutes * 60 + totalTime.Seconds;
             MusicTimeSlider.Value = 0;
             MusicTimeSlider.Maximum = totalSec;
