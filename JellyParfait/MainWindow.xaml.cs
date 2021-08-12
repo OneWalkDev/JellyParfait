@@ -82,7 +82,7 @@ namespace JellyParfait {
             PlayMusic(quere[nowQuere]);
             await Task.Run(() => {
                 while (!Complete) {
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                 }
             });
             Clicked = false;
@@ -102,7 +102,6 @@ namespace JellyParfait {
             } else {
                 nowQuere++;
             }
-            Debug.Print(nowQuere.ToString());
             PlayMusic(quere[nowQuere]);
             await Task.Run(() => {
                 while (!Complete) {
@@ -191,11 +190,10 @@ namespace JellyParfait {
                 AsyncPlay();
                 Complete = true;
                 while (true) {
-
                     Thread.Sleep(200);
-                    
                     if (player == null) break;
-                    if (player.PlaybackState != PlaybackState.Playing) break;
+                    if (player.PlaybackState == PlaybackState.Paused) continue;
+                    if (player.PlaybackState == PlaybackState.Stopped) break;
                     if (sliderClick) continue;
                     if (time != media.CurrentTime) {
                         Dispatcher.Invoke(() => SetNowTime(media.CurrentTime));

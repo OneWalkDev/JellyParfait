@@ -45,6 +45,7 @@ namespace JellyParfait {
 
 
         private void Exit_Click(object sender, EventArgs e) {
+            mainWindow.Close();
             Shutdown();
         }
     }
