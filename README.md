@@ -2,7 +2,7 @@
 
 <img src="https://github.com/yurisi0212/JellyParfait/blob/master/JellyParfait/Resources/JellyParfait_alpha.png" width="200" alt="ぜりーぱふぇ"> 
 
-© [tea](https://twitter.com/tea___ya) 
+© [たくまっち](https://twitter.com/xtakumatutix) 
 
 ## 概要 
 
