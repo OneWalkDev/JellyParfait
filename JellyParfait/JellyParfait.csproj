@@ -14,6 +14,17 @@
     <None Remove="Resources\pause.png" />
     <None Remove="Resources\play.png" />
     <None Remove="Resources\prev.png" />
+    <None Remove="Resources\QuerePause.png" />
+    <None Remove="Resources\QuerePlay.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\QuerePause.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\QuerePlay.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

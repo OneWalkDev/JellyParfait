@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="JellyParfait" Height="500" Width="800"
-       Closing="Window_Closing">
+        Closing="Window_Closing"
+        Closed="Window_Closed">
     <Window.Resources>
         <Image x:Key="Play" Source="/Resources/play.png"/>
         <Image x:Key="Pause" Source="/Resources/pause.png"/>
@@ -67,7 +68,9 @@
                                         </Grid.ColumnDefinitions>
                                         <Grid Grid.Column="0">
                                             <StackPanel>
-                                                <Button Content="▶"  Width="20" Height="20" Command="{Binding ClickCommand}"/>
+                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="#F0F0F0">
+                                                    <Image Source="{Binding PlayButton_QuereUri}"/>
+                                                </Button>
                                             </StackPanel>
                                         </Grid>
                                         <StackPanel Grid.Column="1">

@@ -13,7 +13,6 @@ namespace JellyParfait {
             mainWindow.Show();
         }
 
-
         /// <summary>
         /// System.Windows.Application.Startup イベント を発生させます。
         /// </summary>

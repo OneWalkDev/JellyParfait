@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using System;
 using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace JellyParfait.Data {
 
@@ -21,13 +23,12 @@ namespace JellyParfait.Data {
 
         public string YoutubeUrl { get; set; }
 
+        public Uri PlayButton_QuereUri { get; set; }
+
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
                     main.SetQuere(QuereId);
-                    Debug.Print(QuereId.ToString());
-                    main.PlayMusic(this);
-                    main.ChangeTitle(Title);
                 });
             }
         }

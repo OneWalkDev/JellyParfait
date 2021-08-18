@@ -6,6 +6,9 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
@@ -34,7 +37,7 @@ namespace JellyParfait {
         /// <summary>
         /// キュー
         /// </summary>
-        private List<MusicData> quere = new List <MusicData>();
+        private List<MusicData> quere = new List<MusicData>();
 
         private int nowQuere = -1;
 
@@ -43,12 +46,23 @@ namespace JellyParfait {
         private bool Complete;
 
         public MainWindow() {
-            InitializeComponent(); 
+            InitializeComponent();
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = true;
+            this.Hide();
+        }
+
+        private void Window_Closed(object sender, EventArgs e) {
+            if (IsPlay()) {
+                Stop();
+                player.Dispose();
+            }
+        }
 
         public void Exit_click(object sender, RoutedEventArgs e) {
-            Application.Current.MainWindow.Close();
+            Application.Current.Shutdown();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
@@ -89,7 +103,7 @@ namespace JellyParfait {
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e) {
-            Next(); 
+            Next();
         }
 
         private async void Next() {
@@ -111,11 +125,6 @@ namespace JellyParfait {
             Clicked = false;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            e.Cancel = true;
-            this.Hide();
-        }
-
         private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             Debug.Print("MouseUp");
             if (IsPlay()) {
@@ -135,8 +144,8 @@ namespace JellyParfait {
         }
 
         private void MusicTimeSlider_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-           sliderClick = true;
-           if (IsPlay()) {
+            sliderClick = true;
+            if (IsPlay()) {
                 Debug.Print("MouseDown");
                 Debug.Print(MusicTimeSlider.Value.ToString());
                 //player.Dispose();
@@ -174,7 +183,13 @@ namespace JellyParfait {
                     media.Dispose();
                 }
             });
+
             PlayButton.Content = Resources["Pause"];
+
+            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePause.png");
+            MusicQuere.ItemsSource = null;
+            MusicQuere.ItemsSource = quere;
+
             await Task.Run(() => {
                 player = new WaveOutEvent();
                 media = new MediaFoundationReader(data.Url);
@@ -202,7 +217,11 @@ namespace JellyParfait {
                     }
                 }
             });
-            if(player.PlaybackState != PlaybackState.Paused) Next();
+
+            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
+            MusicQuere.ItemsSource = null;
+            MusicQuere.ItemsSource = quere;
+            if (player.PlaybackState != PlaybackState.Paused) Next();
         }
 
         private async Task<MusicData> GetVideoObject(string youtubeUrl) {
@@ -217,6 +236,7 @@ namespace JellyParfait {
                 data.Url = streamInfo.Url;
                 data.YoutubeUrl = youtubeUrl;
                 data.QuereId = quere.Count;
+                data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
                 return data;
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
@@ -227,9 +247,9 @@ namespace JellyParfait {
             } catch (AggregateException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
-            } catch {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
-                return null;
+                //} catch {
+                //    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
+                //    return null;
             }
         }
 
@@ -247,7 +267,10 @@ namespace JellyParfait {
         }
 
         private void Stop() {
-            if (player != null) player.Stop();
+            if (player != null) {
+                player.Stop();
+                PlayButton.Content = Resources["Play"];
+            }
         }
 
         private void Pause() {
@@ -276,7 +299,7 @@ namespace JellyParfait {
         public void ChangeTitle(string musicTitle) {
             titleLabel.Content = "Now Playing : " + musicTitle;
         }
-         
+
         private void SetTimeSlider(TimeSpan totalTime) {
             var seconds = totalTime.Seconds.ToString();
             if (totalTime.Seconds < 10) seconds = "0" + seconds;
@@ -291,9 +314,19 @@ namespace JellyParfait {
             return player.PlaybackState == PlaybackState.Playing;
         }
 
-        public void SetQuere(int num) {
+        public async void SetQuere(int num) {
+            if (Clicked) return;
+            if (IsPlay()) Stop();
+            Clicked = true;
+            player.Dispose();
             nowQuere = num;
+            PlayMusic(quere[num]);
+            await Task.Run(() => {
+                while (!Complete) {
+                    Thread.Sleep(100);
+                }
+            });
+            Clicked = false;
         }
-
     }
 }
