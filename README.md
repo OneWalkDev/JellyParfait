@@ -2,7 +2,7 @@
 
 <img src="https://github.com/yurisi0212/JellyParfait/blob/master/JellyParfait/Resources/JellyParfait_alpha.png" width="200" alt="ぜりーぱふぇ"> 
 
-© [tea](https://twitter.com/tea___ya) 
+© [たくまっち](https://twitter.com/xtakumatutix) 
 
 ## 概要 
 
@@ -26,8 +26,8 @@ Windows 10 , Windows 11
 
 - [x] 音楽の再生
 - [x] キュー
-- [ ] 再生/停止
-- [ ] ループ
+- [x] 再生/停止
+- [x] ループ
 - [ ] プレイリストの対応
 - [ ] お気に入りの保存
 - [x] タスクトレイで常駐
