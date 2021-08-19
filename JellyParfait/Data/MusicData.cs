@@ -1,7 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System;
-using System.Diagnostics;
-using System.Windows.Controls;
 
 namespace JellyParfait.Data {
 
@@ -28,7 +26,9 @@ namespace JellyParfait.Data {
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
-                    main.SetQuere(QuereId);
+                    if(main.getQuereId() != QuereId) {
+                        main.SetQuere(QuereId);
+                    }
                 });
             }
         }

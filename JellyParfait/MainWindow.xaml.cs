@@ -6,9 +6,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
@@ -39,10 +36,19 @@ namespace JellyParfait {
         /// </summary>
         private List<MusicData> quere = new List<MusicData>();
 
+        /// <summary>
+        /// 現在再生されているキュー
+        /// </summary>
         private int nowQuere = -1;
 
+        /// <summary>
+        /// 連打してはいけないボタンのフラグ
+        /// </summary>
         private bool Clicked;
 
+        /// <summary>
+        /// 正常に再生できているか確認するフラグ
+        /// </summary>
         private bool Complete;
 
         public MainWindow() {
@@ -67,62 +73,6 @@ namespace JellyParfait {
 
         private void Button_Click(object sender, RoutedEventArgs e) {
             AddQuere(searchTextBox.Text);
-        }
-
-        private void PlayButton_Click(object sender, RoutedEventArgs e) {
-            if (Clicked) return;
-            if (player == null) return;
-            if (IsPlay()) {
-                Pause();
-            } else {
-                Play();
-            }
-        }
-
-        private void PrevButton_Click(object sender, RoutedEventArgs e) {
-            Prev();
-        }
-
-        private async void Prev() {
-            if (Clicked) return;
-            if (quere.Count == 0) return;
-            Clicked = true;
-            player.Dispose();
-            if (nowQuere == 0) {
-                nowQuere = quere.Count - 1;
-            } else {
-                nowQuere--;
-            }
-            PlayMusic(quere[nowQuere]);
-            await Task.Run(() => {
-                while (!Complete) {
-                    Thread.Sleep(100);
-                }
-            });
-            Clicked = false;
-        }
-
-        private void NextButton_Click(object sender, RoutedEventArgs e) {
-            Next();
-        }
-
-        private async void Next() {
-            if (Clicked) return;
-            if (nowQuere == -1) return;
-            if (quere.Count == 0) return;
-            Clicked = true;
-            if (quere.Count <= nowQuere + 1) {
-                nowQuere = 0;
-            } else {
-                nowQuere++;
-            }
-            PlayMusic(quere[nowQuere]);
-            await Task.Run(() => {
-                while (!Complete) {
-                    Thread.Sleep(100);
-                }
-            });
-            Clicked = false;
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -152,6 +102,24 @@ namespace JellyParfait {
             }
         }
 
+        private void PrevButton_Click(object sender, RoutedEventArgs e) {
+            Prev();
+        }
+
+        private void PlayButton_Click(object sender, RoutedEventArgs e) {
+            if (Clicked) return;
+            if (player == null) return;
+            if (IsPlay()) {
+                Pause();
+            } else {
+                Play();
+            }
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e) {
+            Next();
+        }
+
         private async void AddQuere(string youtubeUrl) {
             if (quere.Exists(x => x.YoutubeUrl == youtubeUrl)) {
                 var msgbox = MessageBox.Show(this, "すでにその曲は存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -173,55 +141,6 @@ namespace JellyParfait {
                 nowQuere = 0;
                 PlayMusic(musicData);
             }
-        }
-
-        public async void PlayMusic(MusicData data) {
-            Complete = false;
-            await Task.Run(() => {
-                if (player != null) {
-                    player.Dispose();
-                    media.Dispose();
-                }
-            });
-
-            PlayButton.Content = Resources["Pause"];
-
-            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePause.png");
-            MusicQuere.ItemsSource = null;
-            MusicQuere.ItemsSource = quere;
-
-            await Task.Run(() => {
-                player = new WaveOutEvent();
-                media = new MediaFoundationReader(data.Url);
-                media.CurrentTime = new TimeSpan(0, 0, 0, 0, 0);
-                player.Init(media);
-                player.Volume = 0.5f;
-                Dispatcher.Invoke(() => {
-                    ResetTime();
-                    SetTimeSlider(media.TotalTime);
-                    ChangeTitle(quere[nowQuere].Title);
-                });
-                var time = new TimeSpan(0, 0, 0);
-                AsyncPlay();
-                Complete = true;
-                while (true) {
-                    Thread.Sleep(200);
-                    if (player == null) break;
-                    if (player.PlaybackState == PlaybackState.Paused) continue;
-                    if (player.PlaybackState == PlaybackState.Stopped) break;
-                    if (sliderClick) continue;
-                    if (time != media.CurrentTime) {
-                        Dispatcher.Invoke(() => SetNowTime(media.CurrentTime));
-                        time = media.CurrentTime;
-                        Debug.Print(media.CurrentTime.ToString());
-                    }
-                }
-            });
-
-            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
-            MusicQuere.ItemsSource = null;
-            MusicQuere.ItemsSource = quere;
-            if (player.PlaybackState != PlaybackState.Paused) Next();
         }
 
         private async Task<MusicData> GetVideoObject(string youtubeUrl) {
@@ -253,10 +172,56 @@ namespace JellyParfait {
             }
         }
 
-        private void AsyncPlay() {
-            if (player != null) {
+        public async void PlayMusic(MusicData data) {
+            Complete = false;
+            await Task.Run(() => {
+                if (player != null) {
+                    player.Dispose();
+                    media.Dispose();
+                }
+            });
+
+            PlayButton.Content = Resources["Pause"];
+            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuereStop.png");
+            MusicQuere.ItemsSource = null;
+            MusicQuere.ItemsSource = quere;
+            await Task.Run(() => {
+                player = new WaveOutEvent();
+                media = new MediaFoundationReader(data.Url);
+                media.CurrentTime = new TimeSpan(0, 0, 0, 0, 0);
+                player.Init(media);
+                player.Volume = 0.5f;
+                Dispatcher.Invoke(() => {
+                    ResetTime();
+                    SetSliderTimeLabel(media.TotalTime);
+                    ChangeTitle(quere[nowQuere].Title);
+                });
+                var time = new TimeSpan(0, 0, 0);
                 player.Play();
-            }
+                Complete = true;
+                while (true) {
+                    Thread.Sleep(200);
+                    if (player == null) break;
+                    if (player.PlaybackState == PlaybackState.Paused) continue;
+                    if (player.PlaybackState == PlaybackState.Stopped) break;
+                    if (sliderClick) continue;
+                    if (time != media.CurrentTime) {
+                        Dispatcher.Invoke(() => SetTime(media.CurrentTime));
+                        time = media.CurrentTime;
+                        Debug.Print(media.CurrentTime.ToString());
+                    }
+                }
+            });
+
+            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
+            MusicQuere.ItemsSource = null;
+            MusicQuere.ItemsSource = quere;
+            if (player.PlaybackState != PlaybackState.Paused) Next();
+        }
+
+        private bool IsPlay() {
+            if (player == null) return false;
+            return player.PlaybackState == PlaybackState.Playing;
         }
 
         private void Play() {
@@ -280,15 +245,49 @@ namespace JellyParfait {
             }
         }
 
-        private void ResetTime() {
-            startLabel.Content = "0:00";
-            endLabel.Content = "0:00";
-            MusicTimeSlider.Value = 0;
-            MusicTimeSlider.Minimum = MusicTimeSlider.Maximum = 0;
-
+        private async void Prev() {
+            if (Clicked) return;
+            if (quere.Count == 0) return;
+            Clicked = true;
+            player.Dispose();
+            if (nowQuere == 0) {
+                nowQuere = quere.Count - 1;
+            } else {
+                nowQuere--;
+            }
+            PlayMusic(quere[nowQuere]);
+            await Task.Run(() => {
+                while (!Complete) {
+                    Thread.Sleep(100);
+                }
+            });
+            Clicked = false;
         }
 
-        private void SetNowTime(TimeSpan time) {
+        private async void Next() {
+            if (Clicked) return;
+            if (nowQuere == -1) return;
+            if (quere.Count == 0) return;
+            Clicked = true;
+            if (quere.Count <= nowQuere + 1) {
+                nowQuere = 0;
+            } else {
+                nowQuere++;
+            }
+            PlayMusic(quere[nowQuere]);
+            await Task.Run(() => {
+                while (!Complete) {
+                    Thread.Sleep(100);
+                }
+            });
+            Clicked = false;
+        }
+
+        public void ChangeTitle(string musicTitle) {
+            titleLabel.Content = "Now Playing : " + musicTitle;
+        }
+
+        private void SetTime(TimeSpan time) {
             var seconds = time.Seconds.ToString();
             if (time.Seconds < 10) seconds = "0" + seconds;
             var totalSec = time.Minutes * 60 + time.Seconds;
@@ -296,11 +295,14 @@ namespace JellyParfait {
             MusicTimeSlider.Value = totalSec;
         }
 
-        public void ChangeTitle(string musicTitle) {
-            titleLabel.Content = "Now Playing : " + musicTitle;
+        private void ResetTime() {
+            startLabel.Content = "0:00";
+            endLabel.Content = "0:00";
+            MusicTimeSlider.Value = 0;
+            MusicTimeSlider.Minimum = MusicTimeSlider.Maximum = 0;
         }
 
-        private void SetTimeSlider(TimeSpan totalTime) {
+        private void SetSliderTimeLabel(TimeSpan totalTime) {
             var seconds = totalTime.Seconds.ToString();
             if (totalTime.Seconds < 10) seconds = "0" + seconds;
             endLabel.Content = totalTime.Minutes + ":" + seconds;
@@ -309,11 +311,7 @@ namespace JellyParfait {
             MusicTimeSlider.Maximum = totalSec;
         }
 
-        private bool IsPlay() {
-            if (player == null) return false;
-            return player.PlaybackState == PlaybackState.Playing;
-        }
-
+        //MusicData.cs
         public async void SetQuere(int num) {
             if (Clicked) return;
             if (IsPlay()) Stop();
@@ -327,6 +325,10 @@ namespace JellyParfait {
                 }
             });
             Clicked = false;
+        }
+
+        public int getQuereId() {
+            return nowQuere;
         }
     }
 }

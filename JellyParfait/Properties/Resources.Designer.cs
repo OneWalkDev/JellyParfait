@@ -133,9 +133,9 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap QuerePause {
+        public static System.Drawing.Bitmap QuerePlay {
             get {
-                object obj = ResourceManager.GetObject("QuerePause", resourceCulture);
+                object obj = ResourceManager.GetObject("QuerePlay", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +143,9 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap QuerePlay {
+        public static System.Drawing.Bitmap QuereStop {
             get {
-                object obj = ResourceManager.GetObject("QuerePlay", resourceCulture);
+                object obj = ResourceManager.GetObject("QuereStop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -63,17 +63,17 @@
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="20"/>
                                             <ColumnDefinition Width="20*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid Grid.Column="0">
                                             <StackPanel>
-                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="#F0F0F0">
-                                                    <Image Source="{Binding PlayButton_QuereUri}"/>
+                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="#FFFFFF"  BorderBrush="{x:Null}">
+                                                    <Image Source="{Binding PlayButton_QuereUri}" Margin="2,2,2,2"/>
                                                 </Button>
                                             </StackPanel>
                                         </Grid>
-                                        <StackPanel Grid.Column="1">
+                                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
                                             <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </Grid>
