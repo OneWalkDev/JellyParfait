@@ -1,10 +1,13 @@
 # JellyParfait 
 
+<div align="center">
+
 <img src="https://github.com/yurisi0212/JellyParfait/blob/master/JellyParfait/Resources/JellyParfait_alpha.png" width="200" alt="ぜりーぱふぇ"> 
 
 © [たくまっち](https://twitter.com/xtakumatutix) 
 
 <img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License"> <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size"> <img src="https://img.shields.io/badge/Platform-Windows-green">
+ </div>
 
 ## 概要 
 
