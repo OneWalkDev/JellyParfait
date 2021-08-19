@@ -72,7 +72,7 @@ namespace JellyParfait {
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
-            AddQuere(searchTextBox.Text);
+            CheckURL(searchTextBox.Text);
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -116,24 +116,43 @@ namespace JellyParfait {
             Next();
         }
 
-        private async void AddQuere(string youtubeUrl) {
-            if (quere.Exists(x => x.YoutubeUrl == youtubeUrl)) {
-                var msgbox = MessageBox.Show(this, "すでにその曲は存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (msgbox == MessageBoxResult.No) return;
-            }
+        private async void CheckURL(string youtubeUrl) {
+            try {
+                var youtube = new YoutubeClient();
+                var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
+                var videos = youtube.Playlists.GetVideosAsync(playlist.Id);
+                await foreach (var video in videos) {
+                    if (quere.Exists(x => x.YoutubeUrl == video.Url)) {
+                        var msgbox = MessageBox.Show(this, video.Title + "\n既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (msgbox == MessageBoxResult.No) continue;
+                    }
+                    Debug.Print(video.Url);
+                    await Task.Run(() => AddQuere(video.Url));
+                }
 
+            } catch (ArgumentException) {
+                if (quere.Exists(x => x.YoutubeUrl == youtubeUrl)) {
+                    var msgbox = MessageBox.Show(this ,"既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (msgbox == MessageBoxResult.No) return;
+                }
+                await Task.Run(() => AddQuere(youtubeUrl));
+            }
+        }
+
+        private async void AddQuere(string youtubeUrl) {
             MusicData musicData = null;
-            await Task.Run(() => musicData = GetVideoObject(youtubeUrl).Result);
+            musicData = GetVideoObject(youtubeUrl).Result;
             if (musicData == null) return;
             if (musicData.Url == string.Empty) return;
 
             quere.Add(musicData);
-            ReloadListView();
+            Dispatcher.Invoke(() => ReloadListView());
 
             if (quere.Count == 1) {
                 nowQuere = 0;
-                PlayMusic(musicData);
+                Dispatcher.Invoke(() => PlayMusic(musicData));
             }
+
         }
 
         private async Task<MusicData> GetVideoObject(string youtubeUrl) {
@@ -151,7 +170,6 @@ namespace JellyParfait {
                 data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
 
                 return data;
-
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
