@@ -4,6 +4,8 @@
 
 © [たくまっち](https://twitter.com/xtakumatutix) 
 
+<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License"> <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size"> <img src="https://img.shields.io/badge/Platform-Windows-green">
+
 ## 概要 
 
 GUIのyoutubeの音楽再生ソフトです。 
