@@ -28,6 +28,8 @@ namespace JellyParfait.Data {
                 return new RelayCommand(() => {
                     if(main.getQuereId() != QuereId) {
                         main.SetQuere(QuereId);
+                    } else {
+                        (main.IsPlay() ? (Action)main.Pause : main.Play)();
                     }
                 });
             }

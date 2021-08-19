@@ -109,11 +109,7 @@ namespace JellyParfait {
         private void PlayButton_Click(object sender, RoutedEventArgs e) {
             if (Clicked) return;
             if (player == null) return;
-            if (IsPlay()) {
-                Pause();
-            } else {
-                Play();
-            }
+            (IsPlay() ? (Action)Pause : Play)();
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e) {
@@ -125,17 +121,14 @@ namespace JellyParfait {
                 var msgbox = MessageBox.Show(this, "すでにその曲は存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (msgbox == MessageBoxResult.No) return;
             }
+
             MusicData musicData = null;
             await Task.Run(() => musicData = GetVideoObject(youtubeUrl).Result);
             if (musicData == null) return;
             if (musicData.Url == string.Empty) return;
 
-            Debug.Print(musicData.Url);
-
             quere.Add(musicData);
-
-            MusicQuere.ItemsSource = null;
-            MusicQuere.ItemsSource = quere;
+            ReloadListView();
 
             if (quere.Count == 1) {
                 nowQuere = 0;
@@ -148,15 +141,17 @@ namespace JellyParfait {
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
                 var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
-                var streamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
-                var url = streamInfo.Url;
+                var url = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate().Url;
+
                 var data = new MusicData(this);
                 data.Title = video.Title;
-                data.Url = streamInfo.Url;
+                data.Url = url;
                 data.YoutubeUrl = youtubeUrl;
                 data.QuereId = quere.Count;
                 data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
+
                 return data;
+
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
@@ -182,23 +177,28 @@ namespace JellyParfait {
             });
 
             PlayButton.Content = Resources["Pause"];
-            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuereStop.png");
-            MusicQuere.ItemsSource = null;
-            MusicQuere.ItemsSource = quere;
+            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePause.png");
+            ReloadListView();
+
             await Task.Run(() => {
                 player = new WaveOutEvent();
                 media = new MediaFoundationReader(data.Url);
                 media.CurrentTime = new TimeSpan(0, 0, 0, 0, 0);
                 player.Init(media);
-                player.Volume = 0.5f;
+                player.Volume = 0.5f
+                ;
                 Dispatcher.Invoke(() => {
                     ResetTime();
                     SetSliderTimeLabel(media.TotalTime);
                     ChangeTitle(quere[nowQuere].Title);
                 });
+
                 var time = new TimeSpan(0, 0, 0);
+
                 player.Play();
+
                 Complete = true;
+
                 while (true) {
                     Thread.Sleep(200);
                     if (player == null) break;
@@ -214,31 +214,30 @@ namespace JellyParfait {
             });
 
             data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
-            MusicQuere.ItemsSource = null;
-            MusicQuere.ItemsSource = quere;
+            ReloadListView();
             if (player.PlaybackState != PlaybackState.Paused) Next();
         }
 
-        private bool IsPlay() {
+        public bool IsPlay() {
             if (player == null) return false;
             return player.PlaybackState == PlaybackState.Playing;
         }
 
-        private void Play() {
+        public void Play() {
             if (player != null) {
                 player.Play();
                 PlayButton.Content = Resources["Pause"];
             }
         }
 
-        private void Stop() {
+        public void Stop() {
             if (player != null) {
                 player.Stop();
                 PlayButton.Content = Resources["Play"];
             }
         }
 
-        private void Pause() {
+        public void Pause() {
             if (player != null) {
                 player.Pause();
                 PlayButton.Content = Resources["Play"];
@@ -283,8 +282,13 @@ namespace JellyParfait {
             Clicked = false;
         }
 
-        public void ChangeTitle(string musicTitle) {
+        private void ChangeTitle(string musicTitle) {
             titleLabel.Content = "Now Playing : " + musicTitle;
+        }
+
+        private void ReloadListView() {
+            MusicQuere.ItemsSource = null;
+            MusicQuere.ItemsSource = quere;
         }
 
         private void SetTime(TimeSpan time) {
