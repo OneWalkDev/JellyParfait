@@ -20,6 +20,7 @@
     <None Remove="Resources\QuerePause.png" />
     <None Remove="Resources\QuerePlay.png" />
     <None Remove="Resources\QuereUp.png" />
+    <None Remove="Resources\Right.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +68,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\QuereUp.png" />
+    <Resource Include="Resources\Right.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
