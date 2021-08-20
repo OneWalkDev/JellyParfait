@@ -14,11 +14,24 @@
     <None Remove="Resources\pause.png" />
     <None Remove="Resources\play.png" />
     <None Remove="Resources\prev.png" />
+    <None Remove="Resources\QuereDisponse.png" />
+    <None Remove="Resources\QuereDown.png" />
+    <None Remove="Resources\QuereLoop.png" />
     <None Remove="Resources\QuerePause.png" />
     <None Remove="Resources\QuerePlay.png" />
+    <None Remove="Resources\QuereUp.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\QuereDisponse.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\QuereDown.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\QuereLoop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\QuerePause.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -52,6 +65,7 @@
     <Resource Include="Resources\next.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\QuereUp.png" />
   </ItemGroup>
 
   <ItemGroup>

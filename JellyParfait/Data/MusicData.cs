@@ -1,5 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System;
+using System.Diagnostics;
+using System.Windows;
 
 namespace JellyParfait.Data {
 
@@ -13,23 +15,28 @@ namespace JellyParfait.Data {
 
         public int QuereId { get; set; }
 
-        public string PlayButton{ get; set; }
-
         public string Title { get; set; }
 
         public string Url { get; set; }
 
         public string YoutubeUrl { get; set; }
 
-        public Uri PlayButton_QuereUri { get; set; }
+        public Visibility Visibility { get; set; }
+
+        public string Color { get; set; }
 
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
-                    if(main.getQuereId() != QuereId) {
-                        main.SetQuere(QuereId);
-                    } else {
-                        (main.IsPlay() ? (Action)main.Pause : main.Play)();
+                    Debug.Print(main.getClickedFlag().ToString());
+                    if (!main.getClickedFlag()) {
+                        if (main.getQuereId() != QuereId) {
+                            main.SetQuere(QuereId);
+                        } else {
+                            main.changeClickedFlag(true);
+                            (main.IsPlay() ? (Action)main.Pause : main.Play)();
+                            main.changeClickedFlag(false);
+                        }
                     }
                 });
             }

@@ -51,6 +51,11 @@ namespace JellyParfait {
         /// </summary>
         private bool Complete;
 
+        /// <summary>
+        /// 検索中か確認するフラグ
+        /// </summary>
+        private string Searched = String.Empty;
+
         public MainWindow() {
             InitializeComponent();
         }
@@ -76,6 +81,10 @@ namespace JellyParfait {
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
+            if(Searched == searchTextBox.Text) {
+                var msgbox = MessageBox.Show(this, "現在検索しているようです。もう一度追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (msgbox == MessageBoxResult.No) return;
+            }
             CheckURL(searchTextBox.Text);
         }
 
@@ -121,6 +130,7 @@ namespace JellyParfait {
         }
 
         private async void CheckURL(string youtubeUrl) {
+            Searched = youtubeUrl;
             try {
                 var youtube = new YoutubeClient();
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
@@ -140,10 +150,12 @@ namespace JellyParfait {
                     if (msgbox == MessageBoxResult.No) return;
                 }
                 await Task.Run(() => AddQuere(youtubeUrl));
+            } finally {
+                Searched = String.Empty;
             }
         }
 
-        private async void AddQuere(string youtubeUrl) {
+        private void AddQuere(string youtubeUrl) {
             MusicData musicData = null;
             musicData = GetVideoObject(youtubeUrl).Result;
             if (musicData == null) return;
@@ -171,7 +183,8 @@ namespace JellyParfait {
                 data.Url = url;
                 data.YoutubeUrl = youtubeUrl;
                 data.QuereId = quere.Count;
-                data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
+                data.Visibility = Visibility.Hidden;
+                data.Color = "white";
 
                 return data;
             } catch (System.Net.Http.HttpRequestException) {
@@ -199,7 +212,8 @@ namespace JellyParfait {
             });
 
             PlayButton.Content = Resources["Pause"];
-            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePause.png");
+            data.Visibility = Visibility.Visible;
+            data.Color = "NavajoWhite";
             ReloadListView();
 
             await Task.Run(() => {
@@ -235,7 +249,8 @@ namespace JellyParfait {
                 }
             });
 
-            data.PlayButton_QuereUri = new Uri("pack://application:,,,/Resources/QuerePlay.png");
+            data.Visibility = Visibility.Hidden;
+            data.Color = "White";
             ReloadListView();
             if (player.PlaybackState != PlaybackState.Paused) Next();
         }
@@ -355,6 +370,14 @@ namespace JellyParfait {
 
         public int getQuereId() {
             return nowQuere;
+        }
+
+        public void changeClickedFlag(bool flag) {
+            Clicked = flag;
+        }
+
+        public bool getClickedFlag() {
+            return Clicked;
         }
     }
 }

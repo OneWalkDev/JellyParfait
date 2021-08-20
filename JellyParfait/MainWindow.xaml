@@ -41,7 +41,7 @@
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
-                    <TextBox x:Name="searchTextBox" Margin="10,5,0,5" Text="https://www.youtube.com/watch?v=n46-TfPTrXk" />
+                    <TextBox x:Name="searchTextBox" Margin="10,5,0,5" Text="https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi"/>
                 </Grid>
                 <Grid Grid.Column="1">
                     <Button Content="追加" Margin="0,5,10,5" Click="Button_Click"/>
@@ -65,21 +65,52 @@
                         <ListView x:Name="MusicQuere" ItemContainerStyle="{StaticResource ContainerStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid>
+                                    <Grid Background="{Binding Color}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="7"/>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="1"/>
                                             <ColumnDefinition Width="20*"/>
+                                            <ColumnDefinition Width="20"/>
                                         </Grid.ColumnDefinitions>
+
                                         <Grid Grid.Column="0">
                                             <StackPanel>
-                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="#FFFFFF"  BorderBrush="{x:Null}">
-                                                    <Image Source="{Binding PlayButton_QuereUri}" Margin="2,2,2,2"/>
+                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="{x:Null}"   BorderBrush="{x:Null}">
+                                                    <Image Source="./Resources/QuereUp.png" Margin="2,2,2,2"/>
                                                 </Button>
                                             </StackPanel>
                                         </Grid>
-                                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
-                                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1">
+                                            <StackPanel>
+                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="{x:Null}"  BorderBrush="{x:Null}">
+                                                    <Image Source="./Resources/QuereDown.png" Margin="2,2,2,2"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                        
+                                        <Grid Grid.Column="3">
+                                            <StackPanel>
+                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="{x:Null}"  BorderBrush="{x:Null}" Visibility="{Binding Visibility}">
+                                                    <Image Source="./Resources/QuerePlay.png" Margin="2,2,2,2"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                        
+                                        <StackPanel Grid.Column="5" Margin="5,0,0,0">
+                                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Background="{Binding Color}"/>
+                                            
                                         </StackPanel>
+                                       
+                                        <Grid Grid.Column="6" HorizontalAlignment="Right">
+                                            <StackPanel>
+                                                <Button Width="20" Height="20" Command="{Binding ClickCommand}" Background="{x:Null}" BorderBrush="{x:Null}">
+                                                    <Image Source="./Resources/QuereDisponse.png" Margin="2,2,2,2"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>

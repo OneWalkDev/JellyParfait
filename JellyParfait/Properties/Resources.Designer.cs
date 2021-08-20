@@ -133,6 +133,36 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        public static System.Drawing.Bitmap QuereDisponse {
+            get {
+                object obj = ResourceManager.GetObject("QuereDisponse", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap QuereDown {
+            get {
+                object obj = ResourceManager.GetObject("QuereDown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap QuereLoop {
+            get {
+                object obj = ResourceManager.GetObject("QuereLoop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         public static System.Drawing.Bitmap QuerePause {
             get {
                 object obj = ResourceManager.GetObject("QuerePause", resourceCulture);
@@ -146,6 +176,16 @@ namespace JellyParfait.Properties {
         public static System.Drawing.Bitmap QuerePlay {
             get {
                 object obj = ResourceManager.GetObject("QuerePlay", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap QuereUp {
+            get {
+                object obj = ResourceManager.GetObject("QuereUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
