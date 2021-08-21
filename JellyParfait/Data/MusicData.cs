@@ -28,7 +28,6 @@ namespace JellyParfait.Data {
         public RelayCommand ClickCommand {
             get {
                 return new RelayCommand(() => {
-                    Debug.Print(main.getClickedFlag().ToString());
                     if (!main.getClickedFlag()) {
                         if (main.getQuereId() != QuereId) {
                             main.SetQuere(QuereId);

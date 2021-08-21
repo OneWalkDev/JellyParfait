@@ -74,6 +74,10 @@ namespace JellyParfait {
         }
 
         public void Exit_Click(object sender, RoutedEventArgs e) {
+            if (IsPlay()) {
+                Stop();
+                player.Dispose();
+            }
             Application.Current.Shutdown();
         }
 
@@ -260,7 +264,30 @@ namespace JellyParfait {
             data.Visibility = Visibility.Hidden;
             data.Color = "White";
             ReloadListView();
-            if (player.PlaybackState != PlaybackState.Paused) Next();
+
+            if (!Clicked) {
+                if (Loop_Button.IsChecked == true) {
+                    PlayMusic(data);
+                    return;
+                }
+
+                if (Shuffle_Button.IsChecked == true) {
+                    if(quere.Count <= 1) {
+                        Next();
+                        return;
+                    }
+                    while (true) {
+                        var rand = new Random().Next(0, quere.Count);
+                        if (rand != nowQuere) {
+                            SetQuere(rand);
+                            return;
+                        }
+                    }
+                }
+
+                if (player.PlaybackState != PlaybackState.Paused) Next();
+            }
+            
         }
 
         public bool IsPlay() {

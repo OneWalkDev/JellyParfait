@@ -10,6 +10,7 @@
        ShowIconOnTitleBar="True"  
        Closing="Window_Closing"
        Closed="Window_Closed">
+    
     <Window.Resources>
         <Image x:Key="Play" Source="/Resources/play.png"/>
         <Image x:Key="Pause" Source="/Resources/pause.png"/>
@@ -18,6 +19,7 @@
         <Image x:Key="Loop" Source="/Resources/Loop.png"/>
         <Image x:Key="Shuffle" Source="/Resources/Shuffle.png"/>
     </Window.Resources>
+    
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
