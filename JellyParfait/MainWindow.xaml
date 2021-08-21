@@ -15,8 +15,9 @@
         <Image x:Key="Pause" Source="/Resources/pause.png"/>
         <Image x:Key="Prev" Source="/Resources/prev.png"/>
         <Image x:Key="Next" Source="/Resources/next.png"/>
+        <Image x:Key="Loop" Source="/Resources/Loop.png"/>
+        <Image x:Key="Shuffle" Source="/Resources/Shuffle.png"/>
     </Window.Resources>
-
     <Grid>
         <DockPanel>
             <Menu DockPanel.Dock="Top">
@@ -39,8 +40,8 @@
             </Grid.RowDefinitions>
 
             <Grid>
-                <TextBox x:Name="searchTextBox" Margin="5,5,5,5" Text = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi" />
-                <Button Margin="0,0,5,0" Width="80" Height="30" Click="Button_Click" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="Black" BorderThickness="2">
+                <TextBox x:Name="searchTextBox" Margin="5,5,5,5" Text = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi" PreviewKeyDown="SearchTextBox_PreviewKeyDown"/>
+                <Button Margin="0,0,6,0" Width="80" Height="28" Click="Button_Click" HorizontalAlignment="Right" Style="{DynamicResource Search_Button}">
                     <Image Source="./Resources/Right.png"/>
                 </Button>
 
@@ -76,14 +77,14 @@
 
                                         <Grid Grid.Column="0">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Background="{x:Null}"   BorderBrush="{x:Null}">
+                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereUp.png"/>
                                                 </Button>
                                             </StackPanel>
                                         </Grid>
                                         <Grid Grid.Column="1">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Background="{x:Null}"  BorderBrush="{x:Null}">
+                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereDown.png"/>
                                                 </Button>
                                             </StackPanel>
@@ -91,7 +92,7 @@
 
                                         <Grid Grid.Column="3">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Background="{x:Null}"  BorderBrush="{x:Null}" Visibility="{Binding Visibility}">
+                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}" Visibility="{Binding Visibility}">
                                                     <Image Source="./Resources/QuerePlay.png"/>
                                                 </Button>
                                             </StackPanel>
@@ -103,7 +104,7 @@
 
                                         <Grid Grid.Column="6" HorizontalAlignment="Right">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Background="{x:Null}" BorderBrush="{x:Null}">
+                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereDisponse.png"/>
                                                 </Button>
                                             </StackPanel>
@@ -149,23 +150,38 @@
                                 <ColumnDefinition Width="40"/>
                                 <ColumnDefinition Width="0.5*"/>
                                 <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="0.5*"/>
+                                <ColumnDefinition Width="40"/>
+                                <ColumnDefinition Width="0.5*"/>
+                                <ColumnDefinition Width="40"/>
                                 <ColumnDefinition Width="10*"/>
                             </Grid.ColumnDefinitions>
-
+                            
                             <Grid Grid.Column="1">
-                                <Button  Click="PrevButton_Click" BorderBrush="{x:Null}" Background="#FFFFFF" >
+                                <ToggleButton x:Name="Loop_Button" Style="{DynamicResource Toggle}">
+                                    <DynamicResource ResourceKey="Loop"/>
+                                </ToggleButton>
+                            </Grid>
+
+                            <Grid Grid.Column="3">
+                                <Button  Click="PrevButton_Click" Style="{DynamicResource Button}">
                                     <DynamicResource ResourceKey="Prev"/>
                                 </Button>
                             </Grid>
-                            <Grid Grid.Column="3">
-                                <Button x:Name="PlayButton" Click="PlayButton_Click"  BorderBrush="{x:Null}" Background="#FFFFFF">
+                            <Grid Grid.Column="5">
+                                <Button x:Name="PlayButton" Click="PlayButton_Click" Style="{DynamicResource Button}">
                                     <DynamicResource ResourceKey="Play"/>
                                 </Button>
                             </Grid>
-                            <Grid Grid.Column="5">
-                                <Button  Click="NextButton_Click"  BorderBrush="{x:Null}" Background="#FFFFFF">
+                            <Grid Grid.Column="7">
+                                <Button  Click="NextButton_Click" Style="{DynamicResource Button}">
                                     <DynamicResource ResourceKey="Next"/>
                                 </Button>
+                            </Grid>
+                            <Grid Grid.Column="9">
+                                <ToggleButton x:Name="Shuffle_Button"  Style="{DynamicResource Toggle}">
+                                    <DynamicResource ResourceKey="Shuffle"/>
+                                </ToggleButton>
                             </Grid>
                         </Grid>
                     </Grid>

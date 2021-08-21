@@ -81,12 +81,12 @@ namespace JellyParfait {
             MessageBox.Show("JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void SearchTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+            if (e.Key == System.Windows.Input.Key.Enter) Search();
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e) {
-            if(Searched == searchTextBox.Text) {
-                var msgbox = MessageBox.Show(this, "現在検索しているようです。もう一度追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (msgbox == MessageBoxResult.No) return;
-            }
-            CheckURL(searchTextBox.Text);
+            Search();
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -130,6 +130,13 @@ namespace JellyParfait {
             Next();
         }
 
+        private void Search() {
+            if (Searched == searchTextBox.Text) {
+                var msgbox = MessageBox.Show(this, "現在検索しているようです。もう一度追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (msgbox == MessageBoxResult.No) return;
+            }
+            CheckURL(searchTextBox.Text);
+        }
         private async void CheckURL(string youtubeUrl) {
             Searched = youtubeUrl;
             try {
