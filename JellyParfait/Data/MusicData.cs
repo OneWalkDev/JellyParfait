@@ -40,5 +40,25 @@ namespace JellyParfait.Data {
                 });
             }
         }
+
+        public RelayCommand UpCommand {
+            get {
+                return new RelayCommand(() => {
+                    if (!main.getClickedFlag()) {
+                        main.UpMusic(QuereId);
+                    }
+                });
+            }
+        }
+
+        public RelayCommand DownCommand {
+            get {
+                return new RelayCommand(() => {
+                    if (!main.getClickedFlag()) {
+                        main.DownMusic(QuereId);
+                    }
+                });
+            }
+        }
     }
 }

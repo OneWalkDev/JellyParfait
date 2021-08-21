@@ -79,14 +79,14 @@
 
                                         <Grid Grid.Column="0">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}">
+                                                <Button Command="{Binding UpCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereUp.png"/>
                                                 </Button>
                                             </StackPanel>
                                         </Grid>
                                         <Grid Grid.Column="1">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}">
+                                                <Button Command="{Binding DownCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereDown.png"/>
                                                 </Button>
                                             </StackPanel>

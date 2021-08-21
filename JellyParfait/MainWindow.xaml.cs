@@ -436,5 +436,45 @@ namespace JellyParfait {
         public bool getClickedFlag() {
             return Clicked;
         }
+
+        public void UpMusic(int quereId) {
+            if (quereId == 0) return;
+            Clicked = true;
+            var source = quere[quereId];
+            var destination = quere[quereId - 1];
+            if (source.QuereId == nowQuere) {
+                nowQuere--;
+            } else if (destination.QuereId == nowQuere) {
+                nowQuere++;
+            }
+            source.QuereId = quereId - 1;
+            destination.QuereId = quereId;
+            quere[quereId - 1] = source;
+            quere[quereId] = destination;
+            ReloadListView();
+            Clicked = false;
+        }
+
+        public void DownMusic(int quereId) {
+            if (quereId == quere.Count - 1) return;
+            Clicked = true;
+            var source = quere[quereId];
+            var destination = quere[quereId + 1];
+            if (source.QuereId == nowQuere) {
+                nowQuere++;
+            } else if (destination.QuereId == nowQuere) {
+                nowQuere--;
+            }
+            source.QuereId = quereId + 1;
+            destination.QuereId = quereId;
+            quere[quereId + 1] = source;
+            quere[quereId] = destination;
+            ReloadListView();
+            Clicked = false;
+        }
+
+        public void DisponseMusicFromQuere() {
+
+        }
     }
 }
