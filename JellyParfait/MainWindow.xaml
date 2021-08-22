@@ -42,7 +42,7 @@
             </Grid.RowDefinitions>
 
             <Grid>
-                <TextBox x:Name="searchTextBox" Margin="5,5,5,5" Text = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi" PreviewKeyDown="SearchTextBox_PreviewKeyDown"/>
+                <TextBox x:Name="searchTextBox" Margin="5,5,5,5" PreviewKeyDown="SearchTextBox_PreviewKeyDown" Loaded="SearchTextBox_Loaded"/>
                 <Button Margin="0,0,6,0" Width="80" Height="28" Click="Button_Click" HorizontalAlignment="Right" Style="{DynamicResource Search_Button}">
                     <Image Source="./Resources/Right.png"/>
                 </Button>
@@ -63,7 +63,14 @@
                         <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
                     </Grid>
                     <Grid Grid.Row="1">
-                        <ListView x:Name="MusicQuere" BorderBrush="#CCCCCC" BorderThickness="1" ItemContainerStyle="{StaticResource ContainerStyle}">
+                        <ListView
+                            x:Name="MusicQuere"
+                            BorderBrush="#CCCCCC"
+                            BorderThickness="1"
+                            SelectionMode="Single"
+                            ItemContainerStyle="{StaticResource ContainerStyle}"
+                            MouseUp="MusicQuere_MouseUp"
+                            MouseDoubleClick="MusicQuere_MouseDoubleClick">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid Background="{Binding Color}">
@@ -106,7 +113,7 @@
 
                                         <Grid Grid.Column="6" HorizontalAlignment="Right">
                                             <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}">
+                                                <Button Command="{Binding DisponseCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereDisponse.png"/>
                                                 </Button>
                                             </StackPanel>

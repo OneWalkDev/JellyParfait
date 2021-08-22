@@ -1,5 +1,6 @@
 ﻿using JellyParfait.Data;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
@@ -62,6 +64,8 @@ namespace JellyParfait {
         /// </summary>
         private bool Loop;
 
+        private MouseButton mouseButton;
+
         public MainWindow() {
             InitializeComponent();
         }
@@ -91,11 +95,39 @@ namespace JellyParfait {
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
-            if (e.Key == System.Windows.Input.Key.Enter) Search();
+            if (e.Key == Key.Enter) Search();
+        }
+
+
+
+        private async void SearchTextBox_Loaded(object sender, RoutedEventArgs e) {
+            var settings = new MetroDialogSettings {
+                DefaultText= "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
+            };
+            var dialog = await this.ShowInputAsync("ようこそJellyParfaitへ！", "youtubeのURLを入力してください！(プレイリストでもOK)",settings);
+            if (dialog == null) return;
+            if (dialog == String.Empty) return;
+            searchTextBox.Text = dialog;
+            Search();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
             Search();
+        }
+
+        private void MusicQuere_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            mouseButton = e.ChangedButton;
+        }
+
+        private void MusicQuere_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            if (mouseButton.Equals(MouseButton.Left)) {
+                if (nowQuere != MusicQuere.SelectedIndex) {
+                    if (MusicQuere.SelectedIndex != -1) {
+                        SetQuere(MusicQuere.SelectedIndex);
+                    }
+                }
+                MusicQuere.SelectedIndex = -1;
+            }
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -299,6 +331,13 @@ namespace JellyParfait {
             }
         }
 
+        public void PlayerDispose() {
+            player.Dispose();
+            ChangeTitle(string.Empty);
+            ResetTime();
+            Loop = false;
+        }
+
         public void Pause() {
             if (player != null) {
                 player.Pause();
@@ -331,7 +370,7 @@ namespace JellyParfait {
             if (quere.Count == 0) return;
             Clicked = true;
 
-            if (Loop_Button.IsChecked == true) {
+            if (Loop_Button.IsChecked == true || quere.Count == 1) {
                 Stop();
                 await Task.Run(() => {
                     while (Loop) {
@@ -366,7 +405,9 @@ namespace JellyParfait {
             } else {
                 nowQuere++;
             }
+
             PlayMusic(quere[nowQuere]);
+
             await Task.Run(() => {
                 while (!Complete) {
                     Thread.Sleep(100);
@@ -473,8 +514,38 @@ namespace JellyParfait {
             Clicked = false;
         }
 
-        public void DisponseMusicFromQuere() {
+        public void DisponseMusicFromQuere(int quereId) {
+            Clicked = true;
+            var count = 0;
+            quere.RemoveAt(quereId);
+            if (nowQuere == quereId) {
+                PlayerDispose();
+            }
 
+            /*var ary = quere;
+            foreach(var item in quere) {
+                ary.Add(item);
+            }
+            foreach(MusicData music in ary) {
+                music.QuereId = count;
+                if(music.QuereId == quereId) {
+                    if(nowQuere == quereId) {
+                        player.Stop();
+                    }
+                    quere.Remove(music);
+                    break;
+                }  
+            }*/
+            foreach (MusicData music in quere) {
+                music.QuereId = count;
+                count++;
+            }
+            if (quereId <= nowQuere) {
+                nowQuere--;
+            }
+            Debug.Print(nowQuere.ToString());
+            ReloadListView();
+            Clicked = false;
         }
     }
 }

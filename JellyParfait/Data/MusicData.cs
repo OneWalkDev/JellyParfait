@@ -60,5 +60,14 @@ namespace JellyParfait.Data {
                 });
             }
         }
+        public RelayCommand DisponseCommand {
+            get {
+                return new RelayCommand(() => {
+                    if (!main.getClickedFlag()) {
+                        main.DisponseMusicFromQuere(QuereId);
+                    }
+                });
+            }
+        }
     }
 }
