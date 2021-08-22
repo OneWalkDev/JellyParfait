@@ -113,7 +113,7 @@
 
                                         <Grid Grid.Column="6" HorizontalAlignment="Right">
                                             <StackPanel>
-                                                <Button Command="{Binding DisponseCommand}" Style="{DynamicResource Button}">
+                                                <Button Command="{Binding DisposeCommand}" Style="{DynamicResource Button}">
                                                     <Image Source="./Resources/QuereDisponse.png"/>
                                                 </Button>
                                             </StackPanel>

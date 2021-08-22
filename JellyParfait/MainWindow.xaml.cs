@@ -59,11 +59,6 @@ namespace JellyParfait {
         /// </summary>
         private string Searched = String.Empty;
 
-        /// <summary>
-        /// 1曲ループの際、2重にListViewを更新しないようにするフラグ
-        /// </summary>
-        private bool Loop;
-
         private MouseButton mouseButton;
 
         public MainWindow() {
@@ -206,17 +201,21 @@ namespace JellyParfait {
         }
 
         private void AddQuere(string youtubeUrl) {
-            MusicData musicData = null;
-            musicData = GetVideoObject(youtubeUrl).Result;
-            if (musicData == null) return;
-            if (musicData.Url == string.Empty) return;
+            try {
+                MusicData musicData = null;
+                musicData = GetVideoObject(youtubeUrl).Result;
+                if (musicData == null) return;
+                if (musicData.Url == string.Empty) return;
 
-            quere.Add(musicData);
-            Dispatcher.Invoke(() => ReloadListView());
+                quere.Add(musicData);
+                Dispatcher.Invoke(() => ReloadListView());
 
-            if (quere.Count == 1) {
-                nowQuere = 0;
-                Dispatcher.Invoke(() => PlayMusic(musicData));
+                if (quere.Count == 1) {
+                    nowQuere = 0;
+                    Dispatcher.Invoke(() => PlayMusic(musicData));
+                }
+            } catch (AggregateException) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
             }
 
         }
@@ -254,7 +253,6 @@ namespace JellyParfait {
 
         public async void PlayMusic(MusicData data) {
             Complete = false;
-            Loop = true;
             await Task.Run(() => {
                 if (player != null) {
                     player.Dispose();
@@ -287,7 +285,7 @@ namespace JellyParfait {
                 Complete = true;
 
                 while (true) {
-                    Thread.Sleep(200);
+                    Thread.Sleep(100);
                     if (player == null) break;
                     if (player.PlaybackState == PlaybackState.Paused) continue;
                     if (player.PlaybackState == PlaybackState.Stopped) break;
@@ -295,20 +293,20 @@ namespace JellyParfait {
                     if (time != media.CurrentTime) {
                         Dispatcher.Invoke(() => SetTime(media.CurrentTime));
                         time = media.CurrentTime;
-                        Debug.Print(media.CurrentTime.ToString());
+                        //Debug.Print(media.CurrentTime.ToString());
                     }
                 }
             });
 
-            data.Visibility = Visibility.Hidden;
-            data.Color = "White";
-            ReloadListView();
+            if (nowQuere != data.QuereId) {
+                data.Visibility = Visibility.Hidden;
+                data.Color = "White";
+                ReloadListView();
+            }
 
             if (!Clicked) {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
             }
-
-            Loop = false;
 
         }
 
@@ -335,7 +333,6 @@ namespace JellyParfait {
             player.Dispose();
             ChangeTitle(string.Empty);
             ResetTime();
-            Loop = false;
         }
 
         public void Pause() {
@@ -349,7 +346,7 @@ namespace JellyParfait {
             if (Clicked) return;
             if (quere.Count == 0) return;
             Clicked = true;
-            player.Dispose();
+            PlayerDispose();
             if (nowQuere == 0) {
                 nowQuere = quere.Count - 1;
             } else {
@@ -371,12 +368,7 @@ namespace JellyParfait {
             Clicked = true;
 
             if (Loop_Button.IsChecked == true || quere.Count == 1) {
-                Stop();
-                await Task.Run(() => {
-                    while (Loop) {
-                        Thread.Sleep(100);
-                    }
-                });
+                PlayerDispose();
                 PlayMusic(quere[nowQuere]);
                 await Task.Run(() => {
                     while (!Complete) {
@@ -514,28 +506,13 @@ namespace JellyParfait {
             Clicked = false;
         }
 
-        public void DisponseMusicFromQuere(int quereId) {
+        public void DisposeMusicFromQuere(int quereId) {
             Clicked = true;
             var count = 0;
             quere.RemoveAt(quereId);
             if (nowQuere == quereId) {
                 PlayerDispose();
             }
-
-            /*var ary = quere;
-            foreach(var item in quere) {
-                ary.Add(item);
-            }
-            foreach(MusicData music in ary) {
-                music.QuereId = count;
-                if(music.QuereId == quereId) {
-                    if(nowQuere == quereId) {
-                        player.Stop();
-                    }
-                    quere.Remove(music);
-                    break;
-                }  
-            }*/
             foreach (MusicData music in quere) {
                 music.QuereId = count;
                 count++;
@@ -543,7 +520,6 @@ namespace JellyParfait {
             if (quereId <= nowQuere) {
                 nowQuere--;
             }
-            Debug.Print(nowQuere.ToString());
             ReloadListView();
             Clicked = false;
         }
