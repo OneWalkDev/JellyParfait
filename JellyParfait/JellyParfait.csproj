@@ -6,6 +6,12 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources/JellyParfait_alpha 64x64.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
+    <Authors>yurisi</Authors>
+    <Company>yurisi</Company>
+    <Description>JellyParfaitは省メモリでの再生を可能にするyoutube音楽再生ソフトです。
+少ないメモリのパソコンや、あまり無駄にメモリを消費したくないゲーム中などにこのソフトが効果を発揮します！</Description>
+    <Copyright>yurisi</Copyright>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>

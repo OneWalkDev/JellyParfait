@@ -233,6 +233,7 @@ namespace JellyParfait {
                 data.YoutubeUrl = youtubeUrl;
                 data.QuereId = quere.Count;
                 data.Visibility = Visibility.Hidden;
+                data.Id = video.Id;
                 data.Color = "white";
 
                 return data;
@@ -298,16 +299,15 @@ namespace JellyParfait {
                 }
             });
 
+            if (!Clicked) {
+                if (player.PlaybackState != PlaybackState.Paused) Next();
+            }
+
             if (nowQuere != data.QuereId) {
                 data.Visibility = Visibility.Hidden;
                 data.Color = "White";
                 ReloadListView();
             }
-
-            if (!Clicked) {
-                if (player.PlaybackState != PlaybackState.Paused) Next();
-            }
-
         }
 
         public bool IsPlay() {
@@ -446,8 +446,8 @@ namespace JellyParfait {
             if (Clicked) return;
             if (IsPlay()) Stop();
             Clicked = true;
-            player.Dispose();
             nowQuere = num;
+            PlayerDispose();
             PlayMusic(quere[num]);
             await Task.Run(() => {
                 while (!Complete) {

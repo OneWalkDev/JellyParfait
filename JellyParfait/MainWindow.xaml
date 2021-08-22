@@ -73,7 +73,7 @@
                             MouseDoubleClick="MusicQuere_MouseDoubleClick">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Background="{Binding Color}">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="23"/>
                                             <ColumnDefinition Width="23"/>
@@ -108,7 +108,7 @@
                                         </Grid>
 
                                         <Grid Grid.Column="5">
-                                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Background="{Binding Color}"/>
+                                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
                                         </Grid>
 
                                         <Grid Grid.Column="6" HorizontalAlignment="Right">

@@ -15,6 +15,9 @@
             
             <Style x:Key="ContainerStyle" TargetType="ListViewItem" >
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="BorderBrush" Value="#EEEEEE"/>
+                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                <Setter Property="Background" Value="{Binding Color}"/>
             </Style>
             
             
