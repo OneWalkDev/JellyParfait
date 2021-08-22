@@ -5,6 +5,7 @@ using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,12 +13,20 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
+using YoutubeExplode.Converter;
 
 namespace JellyParfait {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : MetroWindow {
+
+        /// <summary>
+        /// フォルダへのパス
+        /// </summary>
+        private readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\";
+
+        private readonly string cachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\cache\";
 
         /// <summary>
         /// 音楽の情報
@@ -59,10 +68,17 @@ namespace JellyParfait {
         /// </summary>
         private string Searched = String.Empty;
 
+        private bool download;
+
+        private bool first;
+
         private MouseButton mouseButton;
+
 
         public MainWindow() {
             InitializeComponent();
+            if (!File.Exists(cachePath)) first = true;
+            Directory.CreateDirectory(cachePath);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -96,14 +112,16 @@ namespace JellyParfait {
 
 
         private async void SearchTextBox_Loaded(object sender, RoutedEventArgs e) {
-            var settings = new MetroDialogSettings {
-                DefaultText= "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
-            };
-            var dialog = await this.ShowInputAsync("ようこそJellyParfaitへ！", "youtubeのURLを入力してください！(プレイリストでもOK)",settings);
-            if (dialog == null) return;
-            if (dialog == String.Empty) return;
-            searchTextBox.Text = dialog;
-            Search();
+            if (first) {
+                var settings = new MetroDialogSettings {
+                    DefaultText = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
+                };
+                var dialog = await this.ShowInputAsync("ようこそJellyParfaitへ！", "youtubeのURLを入力してください！(プレイリストでもOK)\n初回はキャッシュのダウンロードがあるので時間がかかります", settings);
+                if (dialog == null) return;
+                if (dialog == String.Empty) return;
+                searchTextBox.Text = dialog;
+                Search();
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
@@ -225,17 +243,21 @@ namespace JellyParfait {
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
                 var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
-                var url = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate().Url;
+                var music = cachePath + video.Id + ".mp3";
 
-                var data = new MusicData(this);
-                data.Title = video.Title;
-                data.Url = url;
-                data.YoutubeUrl = youtubeUrl;
-                data.QuereId = quere.Count;
-                data.Visibility = Visibility.Hidden;
-                data.Id = video.Id;
-                data.Color = "white";
+                if (!File.Exists(music)) {
+                    await youtubeClient.Videos.DownloadAsync(youtubeUrl, music);
+                }
 
+                var data = new MusicData(this) {
+                    Title = video.Title,
+                    Url = music,
+                    YoutubeUrl = youtubeUrl,
+                    QuereId = quere.Count,
+                    Visibility = Visibility.Hidden,
+                    Id = video.Id,
+                    Color = "white"
+                };
                 return data;
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
@@ -246,9 +268,9 @@ namespace JellyParfait {
             } catch (AggregateException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
-                //} catch {
-                //    Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
-                //    return null;
+            } catch {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
+                return null;
             }
         }
 
@@ -267,9 +289,10 @@ namespace JellyParfait {
             ReloadListView();
 
             await Task.Run(() => {
-                player = new WaveOutEvent();
-                media = new MediaFoundationReader(data.Url);
-                media.CurrentTime = new TimeSpan(0, 0, 0, 0, 0);
+                player = new WaveOutEvent() { DesiredLatency = 200 };
+                media = new MediaFoundationReader(data.Url) {
+                    Position = 0
+                };
                 player.Init(media);
                 player.Volume = 0.5f
                 ;
@@ -430,7 +453,8 @@ namespace JellyParfait {
             startLabel.Content = "0:00";
             endLabel.Content = "0:00";
             MusicTimeSlider.Value = 0;
-            MusicTimeSlider.Minimum = MusicTimeSlider.Maximum = 0;
+            MusicTimeSlider.Minimum = 0;
+            MusicTimeSlider.Maximum = 1;
         }
 
         private void SetSliderTimeLabel(TimeSpan totalTime) {

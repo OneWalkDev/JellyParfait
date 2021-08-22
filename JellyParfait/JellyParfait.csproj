@@ -55,6 +55,7 @@
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
     <PackageReference Include="NAudio" Version="2.0.1" />
     <PackageReference Include="YoutubeExplode" Version="6.0.5" />
+    <PackageReference Include="YoutubeExplode.Converter" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
