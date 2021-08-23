@@ -1,27 +1,35 @@
-# JellyParfait 
-
 <div align="center">
+ 
+ # JellyParfait 
 
 <img src="https://github.com/yurisi0212/JellyParfait/blob/master/JellyParfait/Resources/JellyParfait_alpha.png" width="200" alt="ぜりーぱふぇ"> 
 
 © [たくまっち](https://twitter.com/xtakumatutix) 
 
-<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License"> <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size"> <img src="https://img.shields.io/badge/Platform-Windows-green"><img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait"><img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
- </div>
+<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License">
+ <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size">
+ <img src="https://img.shields.io/badge/Platform-Windows-green">
+ <img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait">
+ <img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
+</div>
 
 ## 概要 
 
 GUIのyoutubeの音楽再生ソフトです。 
 
-いわゆるゲーミングミュージックプレイやーです。
+いわゆるゲーミングミュージックプレイヤーです。
 
-ブラウザを使うとメモリの使用量が許容範囲を超えてしまい、 
+音楽を聞く際にブラウザを使うとメモリの使用量が許容範囲を超えてしまい、 
 
-メモリの少ないパソコンやゲーム中など、なるべくメモリを使いたくない時にこのソフトが活躍します。 
+メモリの少ないパソコンやゲーム中などで動作がもっさりしてしまいます。 
 
-ただ、初回に音楽を読み込ませる際、音楽をダウンロードするのでCPU使用率が少しだけ高くなりますので 
+音楽を聞くだけでメモリを多く使いたくない時にこのソフトが活躍します。 
 
-あらかじめ音楽を読み込ませておくことをお勧めします。
+初回に音楽を読み込む際、音楽をダウンロードする為CPU使用率が少しだけ高くなりますので 
+
+あらかじめ音楽を読み込ませておくことをお勧めします。 
+
+なお、パソコン内に入っているmp3ファイルも読み込むことができます。
  
 ## インストール方法   
 
@@ -31,14 +39,19 @@ GUIのyoutubeの音楽再生ソフトです。
 
 [Release](https://github.com/yurisi0212/JellyParfait/releases) のsetup.exeをダウンロード後、実行すればインストールすることができます。 
 
+## 使い方 
+
+リリースをお待ち下さい。
+
 ## 動作確認済みOS 
 
-Windows 10 , Windows 11 
+* Windows10 64bit
+* Windows11 64bit
 
 ## TODO 
 
 - [x] 音楽の再生
-- [ ] シークバーでの曲の場所の調整
+- [x] シークバーでの曲の場所の調整
 - [x] キュー
 - [x] キューの削除機能
 - [x] 再生/停止
@@ -50,4 +63,3 @@ Windows 10 , Windows 11
 - [x] タスクトレイで常駐
 - [ ] ボリュームバー
 - [ ] イコライザ
-
