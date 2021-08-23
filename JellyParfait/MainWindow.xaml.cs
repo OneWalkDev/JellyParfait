@@ -234,7 +234,9 @@ namespace JellyParfait {
                 var music = cachePath + video.Id + ".mp3";
 
                 if (!File.Exists(music)) {
-                    await youtubeClient.Videos.DownloadAsync(youtubeUrl, music);
+                    var manifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
+                    var info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+                    await youtubeClient.Videos.Streams.DownloadAsync(info, music);
                 }
 
                 var data = new MusicData(this) {
