@@ -4,6 +4,7 @@ using MahApps.Metro.Controls.Dialogs;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -247,7 +248,16 @@ namespace JellyParfait {
                 Dispatcher.Invoke(() => {
                     Progress.Value = 2;
                 });
+
                 if (!File.Exists(music)) {
+                    if (TimeSpan.Compare(video.Duration.Value, new TimeSpan(0, 30, 0)) == 1) {
+                        var result = false;
+                        Dispatcher.Invoke(() => {
+                            var msgbox = MessageBox.Show(this, "「" + video.Title + "」\n" + "この動画は30分を超えています。\nダウンロードに時間がかかり、空き容量を多く使う可能性がありますがよろしいでしょうか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                            if (msgbox == MessageBoxResult.No) result = true;
+                        });
+                        if (result) return null;
+                    }
                     var manifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
                     var info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
                     await youtubeClient.Videos.Streams.DownloadAsync(info, music);
@@ -283,10 +293,10 @@ namespace JellyParfait {
             } catch (AggregateException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
-            } catch {
+            }/* catch {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
-            }
+            }*/
         }
 
         public async void PlayMusic(MusicData data) {
@@ -461,10 +471,18 @@ namespace JellyParfait {
         }
 
         private void SetTime(TimeSpan time) {
+            var hours = "";
+            var totalSec = 0;
+            var minutes = time.Minutes.ToString();
+            if (time.Hours != 0) {
+                hours = time.Hours.ToString() + ":";
+                totalSec = totalSec + (time.Hours * 60 * 60);
+                if (time.Minutes < 10) minutes = "0" + minutes;
+            }
             var seconds = time.Seconds.ToString();
             if (time.Seconds < 10) seconds = "0" + seconds;
-            var totalSec = time.Minutes * 60 + time.Seconds;
-            startLabel.Content = time.Minutes.ToString() + ":" + seconds;
+            totalSec = totalSec + (time.Minutes * 60) + time.Seconds;
+            startLabel.Content = hours + minutes + ":" + seconds;
             MusicTimeSlider.Value = totalSec;
         }
 
@@ -477,10 +495,20 @@ namespace JellyParfait {
         }
 
         private void SetSliderTimeLabel(TimeSpan totalTime) {
+            var hours = "";
+            var totalSec = 0;
             var seconds = totalTime.Seconds.ToString();
+            var minutes = totalTime.Minutes.ToString();
+            if (totalTime.Hours != 0) {
+                hours = totalTime.Hours.ToString() + ":";
+                totalSec = totalSec + (totalTime.Hours * 60 * 60);
+                if (totalTime.Minutes < 10) minutes = "0" + minutes;
+
+            }
+
             if (totalTime.Seconds < 10) seconds = "0" + seconds;
-            endLabel.Content = totalTime.Minutes + ":" + seconds;
-            var totalSec = totalTime.Minutes * 60 + totalTime.Seconds;
+            endLabel.Content = hours + minutes + ":" + seconds;
+            totalSec = totalSec + (totalTime.Minutes * 60) + totalTime.Seconds;
             MusicTimeSlider.Value = 0;
             MusicTimeSlider.Maximum = totalSec;
         }
