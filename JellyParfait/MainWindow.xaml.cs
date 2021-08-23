@@ -113,6 +113,7 @@ namespace JellyParfait {
                 Title = "mp3ファイルの選択",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Filter ="mp3ファイル" + "|*.mp3",
+                Multiselect = false
             };
             if (open.ShowDialog() != true) return;
 
