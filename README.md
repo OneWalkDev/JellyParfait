@@ -6,24 +6,32 @@
 
 © [たくまっち](https://twitter.com/xtakumatutix) 
 
-<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License"> <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size"> <img src="https://img.shields.io/badge/Platform-Windows-green">
+<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License"> <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size"> <img src="https://img.shields.io/badge/Platform-Windows-green"><img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait"><img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
  </div>
 
 ## 概要 
 
 GUIのyoutubeの音楽再生ソフトです。 
 
-chromeで音楽再生するとタブ邪魔だし重くて 
+いわゆるゲーミングミュージックプレイやーです。
 
-ノートパソコンのメモリも限られてて 
+ブラウザを使うとメモリの使用量が許容範囲を超えてしまい、 
 
-FOOBAR2000バグっちゃったので作りました
+メモリの少ないパソコンやゲーム中など、なるべくメモリを使いたくない時にこのソフトが活躍します。 
+
+ただ、初回に音楽を読み込ませる際、音楽をダウンロードするのでCPU使用率が少しだけ高くなりますので 
+
+あらかじめ音楽を読み込ませておくことをお勧めします。
  
-## インストール方法  
+## インストール方法   
+
+現在未リリースです。　
+
+アップデートをお待ち下さい。
 
 [Release](https://github.com/yurisi0212/JellyParfait/releases) のsetup.exeをダウンロード後、実行すればインストールすることができます。 
 
-## 対応OS 
+## 動作確認済みOS 
 
 Windows 10 , Windows 11 
 
@@ -41,4 +49,5 @@ Windows 10 , Windows 11
 - [ ] お気に入りの保存
 - [x] タスクトレイで常駐
 - [ ] ボリュームバー
+- [ ] イコライザ
 
