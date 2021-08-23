@@ -1,13 +1,20 @@
-# JellyParfait 
-
 <div align="center">
+ 
+ # JellyParfait 
+
+
 
 <img src="https://github.com/yurisi0212/JellyParfait/blob/master/JellyParfait/Resources/JellyParfait_alpha.png" width="200" alt="ぜりーぱふぇ"> 
 
 © [たくまっち](https://twitter.com/xtakumatutix) 
 
-<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License"> <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size"> <img src="https://img.shields.io/badge/Platform-Windows-green"><img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait"><img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
- </div>
+<img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License">
+ <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size">
+ <img src="https://img.shields.io/badge/Platform-Windows-green">
+ <img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait">
+ <img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
+ 
+</div>
 
 ## 概要 
 
@@ -38,7 +45,7 @@ Windows 10 , Windows 11
 ## TODO 
 
 - [x] 音楽の再生
-- [ ] シークバーでの曲の場所の調整
+- [x] シークバーでの曲の場所の調整
 - [x] キュー
 - [x] キューの削除機能
 - [x] 再生/停止
