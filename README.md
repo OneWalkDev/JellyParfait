@@ -2,8 +2,6 @@
  
  # JellyParfait 
 
-
-
 <img src="https://github.com/yurisi0212/JellyParfait/blob/master/JellyParfait/Resources/JellyParfait_alpha.png" width="200" alt="ぜりーぱふぇ"> 
 
 © [たくまっち](https://twitter.com/xtakumatutix) 
@@ -13,14 +11,13 @@
  <img src="https://img.shields.io/badge/Platform-Windows-green">
  <img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait">
  <img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
- 
 </div>
 
 ## 概要 
 
 GUIのyoutubeの音楽再生ソフトです。 
 
-いわゆるゲーミングミュージックプレイやーです。
+いわゆるゲーミングミュージックプレイヤーです。
 
 ブラウザを使うとメモリの使用量が許容範囲を超えてしまい、 
 
@@ -28,7 +25,9 @@ GUIのyoutubeの音楽再生ソフトです。
 
 ただ、初回に音楽を読み込ませる際、音楽をダウンロードするのでCPU使用率が少しだけ高くなりますので 
 
-あらかじめ音楽を読み込ませておくことをお勧めします。
+あらかじめ音楽を読み込ませておくことをお勧めします。 
+
+なお、パソコン内に入っているmp3ファイルも読み込むことができます。
  
 ## インストール方法   
 
@@ -38,9 +37,14 @@ GUIのyoutubeの音楽再生ソフトです。
 
 [Release](https://github.com/yurisi0212/JellyParfait/releases) のsetup.exeをダウンロード後、実行すればインストールすることができます。 
 
+## 使い方 
+
+リリースをお待ち下さい。
+
 ## 動作確認済みOS 
 
-Windows 10 , Windows 11 
+* Windows10 64bit
+* Windows11 64bit
 
 ## TODO 
 
@@ -57,4 +61,3 @@ Windows 10 , Windows 11
 - [x] タスクトレイで常駐
 - [ ] ボリュームバー
 - [ ] イコライザ
-
