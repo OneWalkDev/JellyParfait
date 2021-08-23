@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
 using YoutubeExplode.Converter;
+using YoutubeExplode.Videos.Streams;
 
 namespace JellyParfait {
     /// <summary>
@@ -205,7 +206,13 @@ namespace JellyParfait {
         }
 
         private void AddQuere(string youtubeUrl) {
+            Dispatcher.Invoke(() => {
+                Progress.Visibility = Visibility.Visible;
+                Progress.Value = 0;
+                Progress.Maximum = 4;
+            });
             try {
+                
                 MusicData musicData = null;
                 musicData = GetVideoObject(youtubeUrl).Result;
                 if (musicData == null) return;
@@ -220,29 +227,42 @@ namespace JellyParfait {
                 }
             } catch (AggregateException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+            } finally {
+                Dispatcher.Invoke(() => {
+                    Progress.Visibility = Visibility.Hidden;
+                });
             }
 
         }
 
         private async Task<MusicData> GetVideoObject(string youtubeUrl) {
             try {
+                Dispatcher.Invoke(() => {
+                    Progress.Value = 1;
+                });
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
                 var music = cachePath + video.Id + ".mp3";
                 var image = cachePath + video.Id + ".jpg";
-
+                Dispatcher.Invoke(() => {
+                    Progress.Value = 2;
+                });
                 if (!File.Exists(music)) {
                     var manifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
                     var info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
                     await youtubeClient.Videos.Streams.DownloadAsync(info, music);
                 }
-
+                Dispatcher.Invoke(() => {
+                    Progress.Value = 3;
+                });
                 if (!File.Exists(image)) {
                     using (WebClient client = new WebClient()) {
                         await Task.Run(()=>client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image));
                     }
                 }
-
+                Dispatcher.Invoke(() => {
+                    Progress.Value = 4;
+                });
                 var data = new MusicData(this) {
                     QuereId = quere.Count,
                     Title = video.Title,

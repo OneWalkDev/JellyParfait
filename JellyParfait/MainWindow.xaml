@@ -19,8 +19,8 @@
         <Image x:Key="Loop" Source="/Resources/Loop.png"/>
         <Image x:Key="Shuffle" Source="/Resources/Shuffle.png"/>
     </Window.Resources>
-    
-    <Grid Focusable="False">
+
+    <Grid>
         <DockPanel Focusable="False">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="ファイル(_F)">
@@ -40,9 +40,10 @@
                 <MenuItem Header="ヘルプ(_H)">
                     <MenuItem Header="バージョン情報" Click="Version_Infomation_Click"/>
                 </MenuItem>
-        </Menu>
+            </Menu>
+        </DockPanel>
 
-        <Grid>
+        <Grid Margin="0,30,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
@@ -54,7 +55,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="40"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <TextBox x:Name="searchTextBox" Grid.Column="0"
                          PreviewKeyDown="SearchTextBox_PreviewKeyDown"
                          Loaded="SearchTextBox_Loaded"/>
@@ -71,7 +72,16 @@
                     <RowDefinition Height="10*"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="150"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0">
                     <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
+                    </Grid>
+                    <Grid Grid.Column="1" Margin="0,5,0,5" >
+                        <ProgressBar x:Name="Progress" Visibility="Hidden"/>
+                    </Grid>
                 </Grid>
                 <Grid Grid.Row="1">
                     <ListView
@@ -85,36 +95,36 @@
                             MouseUp="MusicQuere_MouseUp"
                             MouseDoubleClick="MusicQuere_MouseDoubleClick">
 
-                            <ListBox.Background>
-                                <ImageBrush x:Name="MusicQuereBackground"/>
-                            </ListBox.Background>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="23"/>
-                                            <ColumnDefinition Width="23"/>
-                                            <ColumnDefinition Width="10"/>
-                                            <ColumnDefinition Width="23"/>
-                                            <ColumnDefinition Width="10"/>
-                                            <ColumnDefinition Width="20*"/>
-                                            <ColumnDefinition Width="23"/>
-                                        </Grid.ColumnDefinitions>
+                        <ListBox.Background>
+                            <ImageBrush x:Name="MusicQuereBackground"/>
+                        </ListBox.Background>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="23"/>
+                                        <ColumnDefinition Width="23"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="23"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="20*"/>
+                                        <ColumnDefinition Width="23"/>
+                                    </Grid.ColumnDefinitions>
 
-                                        <Grid Grid.Column="0">
-                                            <StackPanel>
-                                                <Button Command="{Binding UpCommand}" Style="{DynamicResource Button}">
-                                                    <Image Source="./Resources/QuereUp.png"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
-                                        <Grid Grid.Column="1">
-                                            <StackPanel>
-                                                <Button Command="{Binding DownCommand}" Style="{DynamicResource Button}">
-                                                    <Image Source="./Resources/QuereDown.png"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
+                                    <Grid Grid.Column="0">
+                                        <StackPanel>
+                                            <Button Command="{Binding UpCommand}" Style="{DynamicResource Button}">
+                                                <Image Source="./Resources/QuereUp.png"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Column="1">
+                                        <StackPanel>
+                                            <Button Command="{Binding DownCommand}" Style="{DynamicResource Button}">
+                                                <Image Source="./Resources/QuereDown.png"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
 
                                     <Grid Grid.Column="3">
                                         <StackPanel>
@@ -148,7 +158,7 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                
+
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.1*"/>
@@ -157,7 +167,7 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="0.1*"/>
                     </Grid.ColumnDefinitions>
-                    
+
                     <Grid Grid.Column="1">
                         <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
                     </Grid>
@@ -168,64 +178,58 @@
                                         PreviewMouseLeftButtonDown="MusicTimeSlider_PreviewMouseDown"
                                         IsMoveToPointEnabled ="True"
                                 />
-                            </Grid>
-                            <Grid Grid.Column="3">
-                                <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>
-                            </Grid>
-                        </Grid>
-                        <Grid Grid.Row="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="6*"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="0.5*"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="0.5*"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="0.5*"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="0.5*"/>
-                                <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="6*"/>
-                                <ColumnDefinition Width="2*"/>
-                            </Grid.ColumnDefinitions>
+                    </Grid>
+                    <Grid Grid.Column="3">
+                        <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
 
-                            <Grid Grid.Column="1" Margin="0,5,0,5">
-                                <ProgressBar/>
-                            </Grid>
-                            
-                            <Grid Grid.Column="3">
-                                <ToggleButton x:Name="Loop_Button" Style="{DynamicResource Toggle}">
-                                    <DynamicResource ResourceKey="Loop"/>
-                                </ToggleButton>
-                            </Grid>
+                    <Grid Grid.Column="3">
+                        <ToggleButton x:Name="Loop_Button" Style="{DynamicResource Toggle}">
+                            <DynamicResource ResourceKey="Loop"/>
+                        </ToggleButton>
+                    </Grid>
 
-                            <Grid Grid.Column="5">
-                                <Button  Click="PrevButton_Click" Style="{DynamicResource Button}">
-                                    <DynamicResource ResourceKey="Prev"/>
-                                </Button>
-                            </Grid>
-                            <Grid Grid.Column="7">
-                                <Button x:Name="PlayButton" Click="PlayButton_Click" Style="{DynamicResource Button}">
-                                    <DynamicResource ResourceKey="Play"/>
-                                </Button>
-                            </Grid>
-                            <Grid Grid.Column="9">
-                                <Button  Click="NextButton_Click" Style="{DynamicResource Button}">
-                                    <DynamicResource ResourceKey="Next"/>
-                                </Button>
-                            </Grid>
-                            <Grid Grid.Column="11">
-                                <ToggleButton x:Name="Shuffle_Button"  Style="{DynamicResource Toggle}">
-                                    <DynamicResource ResourceKey="Shuffle"/>
-                                </ToggleButton>
-                            </Grid>
-                            <Grid Grid.Column="13" Margin="0,5,0,5">
-                                <Slider />
-                            </Grid>
-                        </Grid>
+                    <Grid Grid.Column="5">
+                        <Button  Click="PrevButton_Click" Style="{DynamicResource Button}">
+                            <DynamicResource ResourceKey="Prev"/>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Column="7">
+                        <Button x:Name="PlayButton" Click="PlayButton_Click" Style="{DynamicResource Button}">
+                            <DynamicResource ResourceKey="Play"/>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Column="9">
+                        <Button  Click="NextButton_Click" Style="{DynamicResource Button}">
+                            <DynamicResource ResourceKey="Next"/>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Column="11">
+                        <ToggleButton x:Name="Shuffle_Button"  Style="{DynamicResource Toggle}">
+                            <DynamicResource ResourceKey="Shuffle"/>
+                        </ToggleButton>
+                    </Grid>
+                    <Grid Grid.Column="13" Margin="0,5,0,5">
+                        <Slider />
                     </Grid>
                 </Grid>
             </Grid>
