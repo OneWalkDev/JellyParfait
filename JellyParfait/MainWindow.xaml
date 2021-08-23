@@ -229,7 +229,13 @@
                         </ToggleButton>
                     </Grid>
                     <Grid Grid.Column="13" Margin="0,5,0,5">
-                        <Slider />
+                        <Slider
+                            x:Name="VolumeSlider"
+                            IsMoveToPointEnabled ="True"
+                            Maximum="1"
+                            Value="0.5"
+                            PreviewMouseLeftButtonUp="VolumeSlider_PreviewMouseUp"
+                            SmallChange="0.01"/>
                     </Grid>
                 </Grid>
             </Grid>

@@ -173,6 +173,13 @@ namespace JellyParfait {
             Next();
         }
 
+        private void VolumeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
+            if (player != null) {
+                player.Volume = (float)VolumeSlider.Value;
+            }
+
+        }
+
         private void Search() {
             if (Searched == searchTextBox.Text) {
                 var msgbox = MessageBox.Show(this, "現在検索しているようです。もう一度追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -318,13 +325,15 @@ namespace JellyParfait {
             bi.EndInit();
             MusicQuereBackground.ImageSource = bi;
 
+            var volume = (float)VolumeSlider.Value;
+
             await Task.Run(() => {
                 player = new WaveOutEvent() { DesiredLatency = 200 };
                 media = new MediaFoundationReader(data.Url) {
                     Position = 0
                 };
                 player.Init(media);
-                player.Volume = 0.5f
+                player.Volume = volume;
                 ;
                 Dispatcher.Invoke(() => {
                     ResetTime();
