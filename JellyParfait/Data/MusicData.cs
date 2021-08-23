@@ -22,6 +22,8 @@ namespace JellyParfait.Data {
 
         public string YoutubeUrl { get; set; }
 
+        public string Thumbnails { get; set; }
+
         public Visibility Visibility { get; set; }
 
         public string Color { get; set; }

@@ -4,15 +4,15 @@ using MahApps.Metro.Controls.Dialogs;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
-using YoutubeExplode.Videos.Streams;
 using YoutubeExplode.Converter;
 
 namespace JellyParfait {
@@ -109,8 +109,6 @@ namespace JellyParfait {
             if (e.Key == Key.Enter) Search();
         }
 
-
-
         private async void SearchTextBox_Loaded(object sender, RoutedEventArgs e) {
             //if (first) {
                 var settings = new MetroDialogSettings {
@@ -192,7 +190,6 @@ namespace JellyParfait {
                         var msgbox = MessageBox.Show(this, video.Title + "\n既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (msgbox == MessageBoxResult.No) continue;
                     }
-                    Debug.Print(video.Url);
                     await Task.Run(() => AddQuere(video.Url));
                 }
 
@@ -232,19 +229,27 @@ namespace JellyParfait {
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
                 var music = cachePath + video.Id + ".mp3";
+                var image = cachePath + video.Id + ".jpg";
 
                 if (!File.Exists(music)) {
                     await youtubeClient.Videos.DownloadAsync(youtubeUrl, music);
                 }
 
+                if (!File.Exists(image)) {
+                    using (WebClient client = new WebClient()) {
+                        await Task.Run(()=>client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image));
+                    }
+                }
+
                 var data = new MusicData(this) {
-                    Title = video.Title,
-                    Url = music,
-                    YoutubeUrl = youtubeUrl,
                     QuereId = quere.Count,
-                    Visibility = Visibility.Hidden,
+                    Title = video.Title,
                     Id = video.Id,
-                    Color = "white"
+                    Url = music,
+                    YoutubeUrl = youtubeUrl,           
+                    Thumbnails = image,
+                    Visibility = Visibility.Hidden,                   
+                    Color = "white",
                 };
                 return data;
             } catch (System.Net.Http.HttpRequestException) {
@@ -275,6 +280,11 @@ namespace JellyParfait {
             data.Visibility = Visibility.Visible;
             data.Color = "NavajoWhite";
             ReloadListView();
+            var bi = new BitmapImage();
+            bi.BeginInit();
+            bi.UriSource = new Uri(data.Thumbnails, UriKind.RelativeOrAbsolute);
+            bi.EndInit();
+            MusicQuereBackground.ImageSource = bi;
 
             await Task.Run(() => {
                 player = new WaveOutEvent() { DesiredLatency = 200 };
