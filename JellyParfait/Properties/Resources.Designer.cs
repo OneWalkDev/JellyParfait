@@ -143,9 +143,9 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap QuereDisponse {
+        public static System.Drawing.Bitmap QueueDispose {
             get {
-                object obj = ResourceManager.GetObject("QuereDisponse", resourceCulture);
+                object obj = ResourceManager.GetObject("QueueDispose", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +153,9 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap QuereDown {
+        public static System.Drawing.Bitmap QueueDown {
             get {
-                object obj = ResourceManager.GetObject("QuereDown", resourceCulture);
+                object obj = ResourceManager.GetObject("QueueDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +163,9 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap QuerePlay {
+        public static System.Drawing.Bitmap QueuePlay {
             get {
-                object obj = ResourceManager.GetObject("QuerePlay", resourceCulture);
+                object obj = ResourceManager.GetObject("QueuePlay", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +173,9 @@ namespace JellyParfait.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap QuereUp {
+        public static System.Drawing.Bitmap QueueUp {
             get {
-                object obj = ResourceManager.GetObject("QuereUp", resourceCulture);
+                object obj = ResourceManager.GetObject("QueueUp", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

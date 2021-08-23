@@ -1,4 +1,5 @@
-﻿using JellyParfait.Data;
+﻿using Microsoft.Win32;
+using JellyParfait.Data;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NAudio.Wave;
@@ -48,12 +49,12 @@ namespace JellyParfait {
         /// <summary>
         /// キュー
         /// </summary>
-        private List<MusicData> quere = new List<MusicData>();
+        private List<MusicData> queue = new List<MusicData>();
 
         /// <summary>
         /// 現在再生されているキュー
         /// </summary>
-        private int nowQuere = -1;
+        private int nowQueue = -1;
 
         /// <summary>
         /// 連打してはいけないボタンのフラグ
@@ -107,6 +108,16 @@ namespace JellyParfait {
             await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
+        private void Mp3_Click(object sender, RoutedEventArgs e) {
+            var open = new OpenFileDialog() {
+                Title = "mp3ファイルの選択",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                Filter ="mp3ファイル" + "|*.mp3",
+            };
+            if (open.ShowDialog() != true) return;
+        }
+
+
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) Search();
         }
@@ -128,17 +139,17 @@ namespace JellyParfait {
             Search();
         }
 
-        private void MusicQuere_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        private void MusicQueue_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             mouseButton = e.ChangedButton;
         }
 
-        private void MusicQuere_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-            if (nowQuere != MusicQuere.SelectedIndex) {
-                if (MusicQuere.SelectedIndex != -1) {
-                    SetQuere(MusicQuere.SelectedIndex);
+        private void MusicQueue_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            if (nowQueue != MusicQueue.SelectedIndex) {
+                if (MusicQueue.SelectedIndex != -1) {
+                    SetQueue(MusicQueue.SelectedIndex);
                 }
             }
-            MusicQuere.SelectedIndex = -1;
+            MusicQueue.SelectedIndex = -1;
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
@@ -195,25 +206,25 @@ namespace JellyParfait {
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
                 var videos = youtube.Playlists.GetVideosAsync(playlist.Id);
                 await foreach (var video in videos) {
-                    if (quere.Exists(x => x.YoutubeUrl == video.Url)) {
+                    if (queue.Exists(x => x.YoutubeUrl == video.Url)) {
                         var msgbox = MessageBox.Show(this, video.Title + "\n既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (msgbox == MessageBoxResult.No) continue;
                     }
-                    await Task.Run(() => AddQuere(video.Url));
+                    await Task.Run(() => AddQueue(video.Url));
                 }
 
             } catch (ArgumentException) {
-                if (quere.Exists(x => x.YoutubeUrl == youtubeUrl)) {
+                if (queue.Exists(x => x.YoutubeUrl == youtubeUrl)) {
                     var msgbox = MessageBox.Show(this ,"既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (msgbox == MessageBoxResult.No) return;
                 }
-                await Task.Run(() => AddQuere(youtubeUrl));
+                await Task.Run(() => AddQueue(youtubeUrl));
             } finally {
                 Searched = String.Empty;
             }
         }
 
-        private void AddQuere(string youtubeUrl) {
+        private void AddQueue(string youtubeUrl) {
             Dispatcher.Invoke(() => {
                 Progress.Visibility = Visibility.Visible;
                 Progress.Value = 0;
@@ -226,11 +237,11 @@ namespace JellyParfait {
                 if (musicData == null) return;
                 if (musicData.Url == string.Empty) return;
 
-                quere.Add(musicData);
+                queue.Add(musicData);
                 Dispatcher.Invoke(() => ReloadListView());
 
-                if (quere.Count == 1) {
-                    nowQuere = 0;
+                if (queue.Count == 1) {
+                    nowQueue = 0;
                     Dispatcher.Invoke(() => PlayMusic(musicData));
                 }
             } catch (AggregateException) {
@@ -281,7 +292,7 @@ namespace JellyParfait {
                     Progress.Value = 4;
                 });
                 var data = new MusicData(this) {
-                    QuereId = quere.Count,
+                    QueueId = queue.Count,
                     Title = video.Title,
                     Id = video.Id,
                     Url = music,
@@ -323,7 +334,7 @@ namespace JellyParfait {
             bi.BeginInit();
             bi.UriSource = new Uri(data.Thumbnails, UriKind.RelativeOrAbsolute);
             bi.EndInit();
-            MusicQuereBackground.ImageSource = bi;
+            MusicQueueBackground.ImageSource = bi;
 
             var volume = (float)VolumeSlider.Value;
 
@@ -338,7 +349,7 @@ namespace JellyParfait {
                 Dispatcher.Invoke(() => {
                     ResetTime();
                     SetSliderTimeLabel(media.TotalTime);
-                    ChangeTitle(quere[nowQuere].Title);
+                    ChangeTitle(queue[nowQueue].Title);
                 });
 
                 var time = new TimeSpan(0, 0, 0);
@@ -364,7 +375,7 @@ namespace JellyParfait {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
             }
 
-            if (nowQuere != data.QuereId) {
+            if (nowQueue != data.QueueId) {
                 data.Visibility = Visibility.Hidden;
                 data.Color = "White";
                 ReloadListView();
@@ -405,15 +416,15 @@ namespace JellyParfait {
 
         private async void Prev() {
             if (Clicked) return;
-            if (quere.Count == 0) return;
+            if (queue.Count == 0) return;
             Clicked = true;
             PlayerDispose();
-            if (nowQuere == 0) {
-                nowQuere = quere.Count - 1;
+            if (nowQueue == 0) {
+                nowQueue = queue.Count - 1;
             } else {
-                nowQuere--;
+                nowQueue--;
             }
-            PlayMusic(quere[nowQuere]);
+            PlayMusic(queue[nowQueue]);
             await Task.Run(() => {
                 while (!Complete) {
                     Thread.Sleep(100);
@@ -424,13 +435,13 @@ namespace JellyParfait {
 
         private async void Next() {
             if (Clicked) return;
-            if (nowQuere == -1) return;
-            if (quere.Count == 0) return;
+            if (nowQueue == -1) return;
+            if (queue.Count == 0) return;
             Clicked = true;
 
-            if (Loop_Button.IsChecked == true || quere.Count == 1) {
+            if (Loop_Button.IsChecked == true || queue.Count == 1) {
                 PlayerDispose();
-                PlayMusic(quere[nowQuere]);
+                PlayMusic(queue[nowQueue]);
                 await Task.Run(() => {
                     while (!Complete) {
                         Thread.Sleep(100);
@@ -441,25 +452,25 @@ namespace JellyParfait {
             }
 
             if (Shuffle_Button.IsChecked == true) {
-                if (quere.Count > 1) {
+                if (queue.Count > 1) {
                     while (true) {
-                        var rand = new Random().Next(0, quere.Count);
-                        if (rand != nowQuere) {
+                        var rand = new Random().Next(0, queue.Count);
+                        if (rand != nowQueue) {
                             Clicked = false;
-                            SetQuere(rand);
+                            SetQueue(rand);
                             return;
                         }
                     }
                 }
             }
 
-            if (quere.Count <= nowQuere + 1) {
-                nowQuere = 0;
+            if (queue.Count <= nowQueue + 1) {
+                nowQueue = 0;
             } else {
-                nowQuere++;
+                nowQueue++;
             }
 
-            PlayMusic(quere[nowQuere]);
+            PlayMusic(queue[nowQueue]);
 
             await Task.Run(() => {
                 while (!Complete) {
@@ -475,8 +486,8 @@ namespace JellyParfait {
         }
 
         private void ReloadListView() {
-            MusicQuere.ItemsSource = null;
-            MusicQuere.ItemsSource = quere;
+            MusicQueue.ItemsSource = null;
+            MusicQueue.ItemsSource = queue;
         }
 
         private void SetTime(TimeSpan time) {
@@ -522,13 +533,13 @@ namespace JellyParfait {
             MusicTimeSlider.Maximum = totalSec;
         }
    
-        public async void SetQuere(int num) {
+        public async void SetQueue(int num) {
             if (Clicked) return;
             if (IsPlay()) Stop();
             Clicked = true;
-            nowQuere = num;
+            nowQueue = num;
             PlayerDispose();
-            PlayMusic(quere[num]);
+            PlayMusic(queue[num]);
             await Task.Run(() => {
                 while (!Complete) {
                     Thread.Sleep(100);
@@ -538,8 +549,8 @@ namespace JellyParfait {
         }
 
         //MusicData.cs
-        public int getQuereId() {
-            return nowQuere;
+        public int getQueueId() {
+            return nowQueue;
         }
 
         public void changeClickedFlag(bool flag) {
@@ -550,55 +561,55 @@ namespace JellyParfait {
             return Clicked;
         }
 
-        public void UpMusic(int quereId) {
-            if (quereId == 0) return;
+        public void UpMusic(int queueId) {
+            if (queueId == 0) return;
             Clicked = true;
-            var source = quere[quereId];
-            var destination = quere[quereId - 1];
-            if (source.QuereId == nowQuere) {
-                nowQuere--;
-            } else if (destination.QuereId == nowQuere) {
-                nowQuere++;
+            var source = queue[queueId];
+            var destination = queue[queueId - 1];
+            if (source.QueueId == nowQueue) {
+                nowQueue--;
+            } else if (destination.QueueId == nowQueue) {
+                nowQueue++;
             }
-            source.QuereId = quereId - 1;
-            destination.QuereId = quereId;
-            quere[quereId - 1] = source;
-            quere[quereId] = destination;
+            source.QueueId = queueId - 1;
+            destination.QueueId = queueId;
+            queue[queueId - 1] = source;
+            queue[queueId] = destination;
             ReloadListView();
             Clicked = false;
         }
 
-        public void DownMusic(int quereId) {
-            if (quereId == quere.Count - 1) return;
+        public void DownMusic(int queueId) {
+            if (queueId == queue.Count - 1) return;
             Clicked = true;
-            var source = quere[quereId];
-            var destination = quere[quereId + 1];
-            if (source.QuereId == nowQuere) {
-                nowQuere++;
-            } else if (destination.QuereId == nowQuere) {
-                nowQuere--;
+            var source = queue[queueId];
+            var destination = queue[queueId + 1];
+            if (source.QueueId == nowQueue) {
+                nowQueue++;
+            } else if (destination.QueueId == nowQueue) {
+                nowQueue--;
             }
-            source.QuereId = quereId + 1;
-            destination.QuereId = quereId;
-            quere[quereId + 1] = source;
-            quere[quereId] = destination;
+            source.QueueId = queueId + 1;
+            destination.QueueId = queueId;
+            queue[queueId + 1] = source;
+            queue[queueId] = destination;
             ReloadListView();
             Clicked = false;
         }
 
-        public void DisposeMusicFromQuere(int quereId) {
+        public void DisposeMusicFromQueue(int queueId) {
             Clicked = true;
             var count = 0;
-            quere.RemoveAt(quereId);
-            if (nowQuere == quereId) {
+            queue.RemoveAt(queueId);
+            if (nowQueue == queueId) {
                 PlayerDispose();
             }
-            foreach (MusicData music in quere) {
-                music.QuereId = count;
+            foreach (MusicData music in queue) {
+                music.QueueId = count;
                 count++;
             }
-            if (quereId <= nowQuere) {
-                nowQuere--;
+            if (queueId <= nowQueue) {
+                nowQueue--;
             }
             ReloadListView();
             Clicked = false;

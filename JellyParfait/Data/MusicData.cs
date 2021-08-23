@@ -12,7 +12,7 @@ namespace JellyParfait.Data {
             this.main = main;
         }
 
-        public int QuereId { get; set; }
+        public int QueueId { get; set; }
 
         public string Title { get; set; }
 
@@ -32,8 +32,8 @@ namespace JellyParfait.Data {
             get {
                 return new RelayCommand(() => {
                     if (!main.getClickedFlag()) {
-                        if (main.getQuereId() != QuereId) {
-                            main.SetQuere(QuereId);
+                        if (main.getQueueId() != QueueId) {
+                            main.SetQueue(QueueId);
                         } else {
                             main.changeClickedFlag(true);
                             (main.IsPlay() ? (Action)main.Pause : main.Play)();
@@ -48,7 +48,7 @@ namespace JellyParfait.Data {
             get {
                 return new RelayCommand(() => {
                     if (!main.getClickedFlag()) {
-                        main.UpMusic(QuereId);
+                        main.UpMusic(QueueId);
                     }
                 });
             }
@@ -58,7 +58,7 @@ namespace JellyParfait.Data {
             get {
                 return new RelayCommand(() => {
                     if (!main.getClickedFlag()) {
-                        main.DownMusic(QuereId);
+                        main.DownMusic(QueueId);
                     }
                 });
             }
@@ -67,7 +67,7 @@ namespace JellyParfait.Data {
             get {
                 return new RelayCommand(() => {
                     if (!main.getClickedFlag()) {
-                        main.DisposeMusicFromQuere(QuereId);
+                        main.DisposeMusicFromQueue(QueueId);
                     }
                 });
             }

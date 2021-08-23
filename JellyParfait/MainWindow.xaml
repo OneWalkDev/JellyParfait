@@ -29,7 +29,7 @@
                     <MenuItem Header="終了" Click="Exit_Click"/>
                 </MenuItem>
                 <MenuItem Header="音楽(_M)">
-                    <MenuItem Header="mp3ファイルを読み込み"/>
+                    <MenuItem Header="mp3ファイルを読み込み" Click="Mp3_Click"/>
                     <MenuItem Header="再生/一時停止" Click="PlayButton_Click"/>
                     <MenuItem Header="イコライザ"/>
                 </MenuItem>
@@ -85,18 +85,18 @@
                 </Grid>
                 <Grid Grid.Row="1">
                     <ListView
-                            x:Name="MusicQuere"
+                            x:Name="MusicQueue"
                             BorderBrush="#CCCCCC"
                             BorderThickness="1"
                             SelectionMode="Single"
                             Opacity="1"
                             ItemContainerStyle="{StaticResource ContainerStyle}"
                             FocusVisualStyle="{x:Null}"
-                            MouseUp="MusicQuere_MouseUp"
-                            MouseDoubleClick="MusicQuere_MouseDoubleClick">
+                            MouseUp="MusicQueue_MouseUp"
+                            MouseDoubleClick="MusicQueue_MouseDoubleClick">
 
                         <ListBox.Background>
-                            <ImageBrush x:Name="MusicQuereBackground"/>
+                            <ImageBrush x:Name="MusicQueueBackground"/>
                         </ListBox.Background>
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -114,14 +114,14 @@
                                     <Grid Grid.Column="0">
                                         <StackPanel>
                                             <Button Command="{Binding UpCommand}" Style="{DynamicResource Button}">
-                                                <Image Source="./Resources/QuereUp.png"/>
+                                                <Image Source="./Resources/QueueUp.png"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
                                     <Grid Grid.Column="1">
                                         <StackPanel>
                                             <Button Command="{Binding DownCommand}" Style="{DynamicResource Button}">
-                                                <Image Source="./Resources/QuereDown.png"/>
+                                                <Image Source="./Resources/QueueDown.png"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -129,7 +129,7 @@
                                     <Grid Grid.Column="3">
                                         <StackPanel>
                                             <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}" Visibility="{Binding Visibility}">
-                                                <Image Source="./Resources/QuerePlay.png"/>
+                                                <Image Source="./Resources/QueuePlay.png"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -141,7 +141,7 @@
                                     <Grid Grid.Column="6" HorizontalAlignment="Right">
                                         <StackPanel>
                                             <Button Command="{Binding DisposeCommand}" Style="{DynamicResource Button}">
-                                                <Image Source="./Resources/QuereDisponse.png"/>
+                                                <Image Source="./Resources/QueueDisponse.png"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>

@@ -25,21 +25,16 @@
     <None Remove="Resources\QuereDown.png" />
     <None Remove="Resources\QuerePlay.png" />
     <None Remove="Resources\QuereUp.png" />
+    <None Remove="Resources\QueueDispose.png" />
+    <None Remove="Resources\QueueDown.png" />
+    <None Remove="Resources\QueuePlay.png" />
+    <None Remove="Resources\QueueUp.png" />
     <None Remove="Resources\Right.png" />
     <None Remove="Resources\Shuffle.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\Loop.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\QuereDisponse.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\QuereDown.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\QuerePlay.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
@@ -71,7 +66,18 @@
     <Resource Include="Resources\next.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\QuereUp.png" />
+    <Resource Include="Resources\QueueDispose.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\QueueDown.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\QueuePlay.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\QueueUp.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Right.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
