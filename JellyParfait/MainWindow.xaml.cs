@@ -232,7 +232,9 @@ namespace JellyParfait {
                 var image = cachePath + video.Id + ".jpg";
 
                 if (!File.Exists(music)) {
-                    await youtubeClient.Videos.DownloadAsync(youtubeUrl, music);
+                    var manifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
+                    var info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+                    await youtubeClient.Videos.Streams.DownloadAsync(info, music);
                 }
 
                 if (!File.Exists(image)) {

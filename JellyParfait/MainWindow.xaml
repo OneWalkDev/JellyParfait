@@ -1,4 +1,4 @@
-﻿<Controls:MetroWindow x:Class="JellyParfait.MainWindow"
+<Controls:MetroWindow x:Class="JellyParfait.MainWindow"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
@@ -40,39 +40,41 @@
                 <MenuItem Header="ヘルプ(_H)">
                     <MenuItem Header="バージョン情報" Click="Version_Infomation_Click"/>
                 </MenuItem>
+        </Menu>
 
-            </Menu>
-        </DockPanel>
-
-        <Grid Margin="0,30,0,0">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
-                <RowDefinition Height="10*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="65"/>
             </Grid.RowDefinitions>
 
-            <Grid>
-                <TextBox x:Name="searchTextBox" Margin="5,5,5,5" PreviewKeyDown="SearchTextBox_PreviewKeyDown" Loaded="SearchTextBox_Loaded"/>
-                <Button Margin="0,0,6,0" Width="80" Height="28" Click="Button_Click" HorizontalAlignment="Right" Style="{DynamicResource Search_Button}">
+            <Grid Grid.Row="0" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox x:Name="searchTextBox" Grid.Column="0"
+                         PreviewKeyDown="SearchTextBox_PreviewKeyDown"
+                         Loaded="SearchTextBox_Loaded"/>
+                <Button Grid.Column="1" Margin="1"
+                        Click="Button_Click"
+                        Style="{DynamicResource Search_Button}">
                     <Image Source="./Resources/Right.png"/>
                 </Button>
-
             </Grid>
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="7*"/>
-                    <RowDefinition Height="60"/>
-                </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Margin="5,10,5,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="10*"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <ListView
+            <Grid Grid.Row="1" Margin="5,10,5,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="10*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <ListView
                             x:Name="MusicQuere"
                             BorderBrush="#CCCCCC"
                             BorderThickness="1"
@@ -82,6 +84,7 @@
                             FocusVisualStyle="{x:Null}"
                             MouseUp="MusicQuere_MouseUp"
                             MouseDoubleClick="MusicQuere_MouseDoubleClick">
+
                             <ListBox.Background>
                                 <ImageBrush x:Name="MusicQuereBackground"/>
                             </ListBox.Background>
@@ -113,53 +116,53 @@
                                             </StackPanel>
                                         </Grid>
 
-                                        <Grid Grid.Column="3">
-                                            <StackPanel>
-                                                <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}" Visibility="{Binding Visibility}">
-                                                    <Image Source="./Resources/QuerePlay.png"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
-
-                                        <Grid Grid.Column="5">
-                                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
-                                        </Grid>
-
-                                        <Grid Grid.Column="6" HorizontalAlignment="Right">
-                                            <StackPanel>
-                                                <Button Command="{Binding DisposeCommand}" Style="{DynamicResource Button}">
-                                                    <Image Source="./Resources/QuereDisponse.png"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
+                                    <Grid Grid.Column="3">
+                                        <StackPanel>
+                                            <Button Command="{Binding ClickCommand}" Style="{DynamicResource Button}" Visibility="{Binding Visibility}">
+                                                <Image Source="./Resources/QuerePlay.png"/>
+                                            </Button>
+                                        </StackPanel>
                                     </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
 
+                                    <Grid Grid.Column="5">
+                                        <TextBlock Text="{Binding Title}" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <Grid Grid.Column="6" HorizontalAlignment="Right">
+                                        <StackPanel>
+                                            <Button Command="{Binding DisposeCommand}" Style="{DynamicResource Button}">
+                                                <Image Source="./Resources/QuereDisponse.png"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Grid>
 
-                <Grid Grid.Row="1">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="5"/>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.1*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="10*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="0.1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="1">
-                                <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
-                            </Grid>
-                            <Grid Grid.Column="2">
-                                <Slider x:Name="MusicTimeSlider"
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="0,0,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="0.1*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid Grid.Column="1">
+                        <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
+                    </Grid>
+                    <Grid Grid.Column="2">
+                        <Slider x:Name="MusicTimeSlider"
                                         Margin="10,0,10,0"
                                         PreviewMouseLeftButtonUp="MusicTimeSlider_PreviewMouseUp"
                                         PreviewMouseLeftButtonDown="MusicTimeSlider_PreviewMouseDown"
