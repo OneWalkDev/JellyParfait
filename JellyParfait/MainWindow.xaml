@@ -24,9 +24,22 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="ファイル(_F)">
-                    <MenuItem Header="test"/>
+                    <MenuItem Header="キャッシュを削除"/>
                     <Separator />
                     <MenuItem Header="終了" Click="Exit_Click"/>
+                </MenuItem>
+                <MenuItem Header="音楽(_M)">
+                    <MenuItem Header="mp3ファイルを読み込み"/>
+                    <MenuItem Header="再生"/>
+                    <MenuItem Header="一時停止"/>
+                    <MenuItem Header="停止"/>
+                    <MenuItem Header="1曲ループ"/>
+                    <MenuItem Header="ランダム再生"/>
+                    <MenuItem Header="イコライザ"/>
+                </MenuItem>
+                <MenuItem Header="プレイリスト(_P)">
+                    <MenuItem Header="プレイリストの読込"/>
+                    <MenuItem Header="現在のプレイリストを保存"/>
                 </MenuItem>
                 <MenuItem Header="ヘルプ(_H)">
                     <MenuItem Header="バージョン情報" Click="Version_Infomation_Click"/>
@@ -145,7 +158,14 @@
                                 <Label x:Name="startLabel" Content="0:00" HorizontalAlignment="Center"/>
                             </Grid>
                             <Grid Grid.Column="2">
-                                <Slider x:Name="MusicTimeSlider" Margin="10,0,10,0" Minimum="0" PreviewMouseUp="MusicTimeSlider_PreviewMouseUp" PreviewMouseDown="MusicTimeSlider_PreviewMouseDown" IsMoveToPointEnabled ="True"/>
+                                <Slider x:Name="MusicTimeSlider"
+                                        Margin="10,0,10,0"
+                                        PreviewMouseUp="MusicTimeSlider_PreviewMouseUp"
+                                        PreviewMouseDown="MusicTimeSlider_PreviewMouseDown"
+                                        IsMoveToPointEnabled ="True"
+                                        SmallChange="1"
+                                        IsSnapToTickEnabled="True"
+                                />
                             </Grid>
                             <Grid Grid.Column="3">
                                 <Label x:Name="endLabel" Content="0:00" HorizontalAlignment="Center"/>

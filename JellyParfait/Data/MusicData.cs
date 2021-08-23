@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using System;
-using System.Diagnostics;
 using System.Windows;
 
 namespace JellyParfait.Data {

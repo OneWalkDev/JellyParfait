@@ -77,7 +77,7 @@ namespace JellyParfait {
 
         public MainWindow() {
             InitializeComponent();
-            if (!File.Exists(cachePath)) first = true;
+            if (!Directory.Exists(path)) first = true;
             Directory.CreateDirectory(cachePath);
         }
 
@@ -144,19 +144,11 @@ namespace JellyParfait {
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-            Debug.Print("MouseUp");
-            if (IsPlay()) {
-                Debug.Print(MusicTimeSlider.Value.ToString());
-                Debug.Print(Math.Floor(MusicTimeSlider.Value).ToString());
-                player.Stop();
-                /* playMusic(quere[nowQuere].Url,timespan); */
-                media.Position = 0;
-                media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
-                media.CurrentTime = media.CurrentTime.Add(TimeSpan.FromSeconds(MusicTimeSlider.Value));
-                media.CurrentTime = media.CurrentTime.Subtract(TimeSpan.FromSeconds(MusicTimeSlider.Value));
-                //media.CurrentTime = TimeSpan.FromSeconds(Math.Floor(MusicTimeSlider.Value));
-                Debug.Print(media.CurrentTime.ToString());
-                player.Play();
+            if (player != null) {
+                if (player.PlaybackState == PlaybackState.Paused) {
+                    media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
+                    Play();
+                }
             }
             sliderClick = false;
         }
@@ -164,9 +156,7 @@ namespace JellyParfait {
         private void MusicTimeSlider_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             sliderClick = true;
             if (IsPlay()) {
-                Debug.Print("MouseDown");
-                Debug.Print(MusicTimeSlider.Value.ToString());
-                //player.Dispose();
+                Pause();
             }
         }
 
@@ -242,7 +232,6 @@ namespace JellyParfait {
             try {
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
-                var streamManifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
                 var music = cachePath + video.Id + ".mp3";
 
                 if (!File.Exists(music)) {
