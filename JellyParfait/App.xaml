@@ -11,6 +11,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <!-- Accent and AppTheme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Crimson.xaml"/>
+               
+                
             </ResourceDictionary.MergedDictionaries>
             
             <Style x:Key="ContainerStyle" TargetType="ListViewItem" >

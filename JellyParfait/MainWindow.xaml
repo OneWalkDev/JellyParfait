@@ -20,7 +20,7 @@
         <Image x:Key="Shuffle" Source="/Resources/Shuffle.png"/>
     </Window.Resources>
     
-    <Grid>
+    <Grid Focusable="False">
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="ファイル(_F)">
@@ -160,11 +160,9 @@
                             <Grid Grid.Column="2">
                                 <Slider x:Name="MusicTimeSlider"
                                         Margin="10,0,10,0"
-                                        PreviewMouseUp="MusicTimeSlider_PreviewMouseUp"
-                                        PreviewMouseDown="MusicTimeSlider_PreviewMouseDown"
+                                        PreviewMouseLeftButtonUp="MusicTimeSlider_PreviewMouseUp"
+                                        PreviewMouseLeftButtonDown="MusicTimeSlider_PreviewMouseDown"
                                         IsMoveToPointEnabled ="True"
-                                        SmallChange="1"
-                                        IsSnapToTickEnabled="True"
                                 />
                             </Grid>
                             <Grid Grid.Column="3">

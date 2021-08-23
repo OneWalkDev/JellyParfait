@@ -101,18 +101,18 @@ namespace JellyParfait {
             Application.Current.Shutdown();
         }
 
-        public void Version_Infomation_Click(object sender, RoutedEventArgs e) {
-            MessageBox.Show("JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
+        public async void Version_Infomation_Click(object sender, RoutedEventArgs e) {
+            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
-        private void SearchTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+        private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) Search();
         }
 
 
 
         private async void SearchTextBox_Loaded(object sender, RoutedEventArgs e) {
-            if (first) {
+            //if (first) {
                 var settings = new MetroDialogSettings {
                     DefaultText = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
                 };
@@ -121,7 +121,7 @@ namespace JellyParfait {
                 if (dialog == String.Empty) return;
                 searchTextBox.Text = dialog;
                 Search();
-            }
+            //}
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
@@ -133,18 +133,17 @@ namespace JellyParfait {
         }
 
         private void MusicQuere_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
-            if (mouseButton.Equals(MouseButton.Left)) {
-                if (nowQuere != MusicQuere.SelectedIndex) {
-                    if (MusicQuere.SelectedIndex != -1) {
-                        SetQuere(MusicQuere.SelectedIndex);
-                    }
+            if (nowQuere != MusicQuere.SelectedIndex) {
+                if (MusicQuere.SelectedIndex != -1) {
+                    SetQuere(MusicQuere.SelectedIndex);
                 }
-                MusicQuere.SelectedIndex = -1;
             }
+            MusicQuere.SelectedIndex = -1;
         }
 
-        private void MusicTimeSlider_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
             if (player != null) {
+                Pause();
                 if (player.PlaybackState == PlaybackState.Paused) {
                     media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
                     Play();
@@ -153,10 +152,10 @@ namespace JellyParfait {
             sliderClick = false;
         }
 
-        private void MusicTimeSlider_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        private void MusicTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
             sliderClick = true;
-            if (IsPlay()) {
-                Pause();
+            if (player == null) {
+                MusicTimeSlider.Value = 0;
             }
         }
 
@@ -298,7 +297,7 @@ namespace JellyParfait {
                 Complete = true;
 
                 while (true) {
-                    Thread.Sleep(100);
+                    Thread.Sleep(200);
                     if (player == null) break;
                     if (player.PlaybackState == PlaybackState.Paused) continue;
                     if (player.PlaybackState == PlaybackState.Stopped) break;
@@ -306,7 +305,6 @@ namespace JellyParfait {
                     if (time != media.CurrentTime) {
                         Dispatcher.Invoke(() => SetTime(media.CurrentTime));
                         time = media.CurrentTime;
-                        //Debug.Print(media.CurrentTime.ToString());
                     }
                 }
             });
