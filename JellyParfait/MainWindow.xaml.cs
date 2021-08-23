@@ -115,6 +115,26 @@ namespace JellyParfait {
                 Filter ="mp3ファイル" + "|*.mp3",
             };
             if (open.ShowDialog() != true) return;
+
+            var data = new MusicData(this) {
+                QueueId = queue.Count,
+                Title = Path.GetFileNameWithoutExtension(open.FileName),
+                Id = "local",
+                Url = open.FileName,
+                YoutubeUrl = open.FileName,
+                Thumbnails = null,
+                Visibility = Visibility.Hidden,
+                Color = "white",
+            };
+
+            queue.Add(data);
+            ReloadListView();
+
+            if (queue.Count == 1) {
+                nowQueue = 0;
+                PlayMusic(data);
+            }
+
         }
 
 
@@ -330,11 +350,16 @@ namespace JellyParfait {
             data.Visibility = Visibility.Visible;
             data.Color = "NavajoWhite";
             ReloadListView();
-            var bi = new BitmapImage();
-            bi.BeginInit();
-            bi.UriSource = new Uri(data.Thumbnails, UriKind.RelativeOrAbsolute);
-            bi.EndInit();
-            MusicQueueBackground.ImageSource = bi;
+
+            if (data.Thumbnails != null) {
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.UriSource = new Uri(data.Thumbnails, UriKind.RelativeOrAbsolute);
+                bi.EndInit();
+                MusicQueueBackground.ImageSource = bi;
+            } else {
+                MusicQueueBackground.ImageSource = null;
+            }
 
             var volume = (float)VolumeSlider.Value;
 
