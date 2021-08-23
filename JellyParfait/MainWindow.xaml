@@ -30,11 +30,7 @@
                 </MenuItem>
                 <MenuItem Header="音楽(_M)">
                     <MenuItem Header="mp3ファイルを読み込み"/>
-                    <MenuItem Header="再生"/>
-                    <MenuItem Header="一時停止"/>
-                    <MenuItem Header="停止"/>
-                    <MenuItem Header="1曲ループ"/>
-                    <MenuItem Header="ランダム再生"/>
+                    <MenuItem Header="再生/一時停止" Click="PlayButton_Click"/>
                     <MenuItem Header="イコライザ"/>
                 </MenuItem>
                 <MenuItem Header="プレイリスト(_P)">
@@ -176,7 +172,9 @@
                         </Grid>
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="6*"/>
+                                <ColumnDefinition Width="2*"/>
                                 <ColumnDefinition Width="40"/>
                                 <ColumnDefinition Width="0.5*"/>
                                 <ColumnDefinition Width="40"/>
@@ -186,34 +184,43 @@
                                 <ColumnDefinition Width="40"/>
                                 <ColumnDefinition Width="0.5*"/>
                                 <ColumnDefinition Width="40"/>
-                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="6*"/>
+                                <ColumnDefinition Width="2*"/>
                             </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="1" Margin="0,5,0,5">
+                                <ProgressBar/>
+                            </Grid>
                             
-                            <Grid Grid.Column="1">
+                            <Grid Grid.Column="3">
                                 <ToggleButton x:Name="Loop_Button" Style="{DynamicResource Toggle}">
                                     <DynamicResource ResourceKey="Loop"/>
                                 </ToggleButton>
                             </Grid>
 
-                            <Grid Grid.Column="3">
+                            <Grid Grid.Column="5">
                                 <Button  Click="PrevButton_Click" Style="{DynamicResource Button}">
                                     <DynamicResource ResourceKey="Prev"/>
                                 </Button>
                             </Grid>
-                            <Grid Grid.Column="5">
+                            <Grid Grid.Column="7">
                                 <Button x:Name="PlayButton" Click="PlayButton_Click" Style="{DynamicResource Button}">
                                     <DynamicResource ResourceKey="Play"/>
                                 </Button>
                             </Grid>
-                            <Grid Grid.Column="7">
+                            <Grid Grid.Column="9">
                                 <Button  Click="NextButton_Click" Style="{DynamicResource Button}">
                                     <DynamicResource ResourceKey="Next"/>
                                 </Button>
                             </Grid>
-                            <Grid Grid.Column="9">
+                            <Grid Grid.Column="11">
                                 <ToggleButton x:Name="Shuffle_Button"  Style="{DynamicResource Toggle}">
                                     <DynamicResource ResourceKey="Shuffle"/>
                                 </ToggleButton>
+                            </Grid>
+                            <Grid Grid.Column="13" Margin="0,5,0,5">
+                                <Slider />
                             </Grid>
                         </Grid>
                     </Grid>
