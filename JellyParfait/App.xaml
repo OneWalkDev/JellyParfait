@@ -11,18 +11,63 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <!-- Accent and AppTheme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Crimson.xaml"/>
-               
-                
+
+
             </ResourceDictionary.MergedDictionaries>
-            
+            <SolidColorBrush x:Key="Item.MouseOver.Background" Color="Gold"/>
+            <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#a826A0Da"/>
+            <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="{Binding Color}"/>
+            <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
+            <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="Gold"/>
+            <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF26A0DA"/>
+
             <Style x:Key="ContainerStyle" TargetType="ListViewItem" >
+               
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="BorderBrush" Value="#EEEEEE"/>
-                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                <Setter Property="BorderThickness" Value="0,1,0,1"/>
                 <Setter Property="Background" Value="{Binding Color}"/>
+                <Setter Property="Opacity" Value="0.90"/>
+                <Setter Property="Foreground" Value="#FF000000"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.MouseOver.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.MouseOver.Border}"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Border}"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Border}"/>
+                                </MultiTrigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
             </Style>
-            
-            
 
             <Style x:Key="Toggle" TargetType="{x:Type ToggleButton}">
                 <Setter Property="Background" Value="#FFFFFF" />
