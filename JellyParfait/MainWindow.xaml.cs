@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,6 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
-using YoutubeExplode.Converter;
 using YoutubeExplode.Videos.Streams;
 using System.Windows.Data;
 using System.Windows.Controls;
@@ -98,6 +98,19 @@ namespace JellyParfait {
             }
         }
 
+        private async void Cache_Click(object sender, RoutedEventArgs e) {
+            double FilesSize = GetDirectorySize(new DirectoryInfo(cachePath));
+            var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約"+FilesSize.ToString()+"MBです\n削除しますか？", MessageDialogStyle.AffirmativeAndNegative,new MetroDialogSettings() {
+                AffirmativeButtonText = "はい",
+                NegativeButtonText = "いいえ"
+            });
+
+            Debug.Print(msgbox.ToString());
+            if (msgbox == MessageDialogResult.Negative) return;
+
+
+        }
+
         public void Exit_Click(object sender, RoutedEventArgs e) {
             if (IsPlay()) {
                 Stop();
@@ -123,7 +136,7 @@ namespace JellyParfait {
                 Title = Path.GetFileNameWithoutExtension(open.FileName),
                 Id = "local",
                 Url = open.FileName,
-                YoutubeUrl = open.FileName,
+                YoutubeUrl = "local",
                 Thumbnails = null,
                 Visibility = Visibility.Hidden,
                 Color = "white",
@@ -133,7 +146,23 @@ namespace JellyParfait {
                 nowQueue = 0;
                 PlayMusic(queue[nowQueue]);
             }
+        }
 
+        private void Twitter_Click(object sender, RoutedEventArgs e) {
+            if (player != null) {
+                if(player.PlaybackState != PlaybackState.Stopped) {
+                    string str;
+                    string title = queue[nowQueue].Title.Replace(" ", "%20");
+                    if (queue[nowQueue].YoutubeUrl == "local") {
+                        str = "Now%20Playing...%0d「" + title + "」%0d%23JellyParfait%20%23NowPlaying";
+                    } else {
+                        str = "Now%20Playing...%0d「" + title + "」%0d" + queue[nowQueue].YoutubeUrl + "%0d%23JellyParfait%20%23NowPlaying";
+                    }
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
+                    return;
+                }
+            }
+            MessageBox.Show("JellyParfait", "現在何も再生されていません。", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -178,6 +207,7 @@ namespace JellyParfait {
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
+            sliderClick = true;
             if (player != null) {
                 Pause();
                 if (player.PlaybackState == PlaybackState.Paused) {
@@ -242,12 +272,14 @@ namespace JellyParfait {
                     await Task.Run(() => AddQueue(video.Url));
                 }
 
-            } catch (ArgumentException) {
-                if (queue.Exists(x => x.YoutubeUrl == youtubeUrl)) {
-                    var msgbox = MessageBox.Show(this ,"既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (msgbox == MessageBoxResult.No) return;
+            } catch (Exception e) {
+                if (e is ArgumentException || e is YoutubeExplode.Exceptions.PlaylistUnavailableException) {
+                    if (queue.Exists(x => x.YoutubeUrl == youtubeUrl)) {
+                        var msgbox = MessageBox.Show(this, "既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (msgbox == MessageBoxResult.No) return;
+                    }
+                    await Task.Run(() => AddQueue(youtubeUrl));
                 }
-                await Task.Run(() => AddQueue(youtubeUrl));
             } finally {
                 Searched = String.Empty;
                 Progress.Visibility = Visibility.Hidden;
@@ -315,7 +347,7 @@ namespace JellyParfait {
                     Color = "white",
                 }; ;
             } catch (System.Net.Http.HttpRequestException) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nキャッシュダウンロード中にエラーが発生しました\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
             } catch (ArgumentException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
@@ -355,38 +387,46 @@ namespace JellyParfait {
 
             var volume = (float)VolumeSlider.Value;
 
+
             await Task.Run(() => {
-                player = new WaveOutEvent() { DesiredLatency = 200 };
-                media = new MediaFoundationReader(data.Url) {
-                    Position = 0
-                };
-                player.Init(media);
-                player.Volume = volume;
-                ;
-                Dispatcher.Invoke(() => {
-                    ResetTime();
-                    SetSliderTimeLabel(media.TotalTime);
-                    ChangeTitle(queue[nowQueue].Title);
-                });
+                try {
+                    player = new WaveOutEvent() { DesiredLatency = 200 };
+                    media = new MediaFoundationReader(data.Url) {
+                        Position = 0
+                    };
+                    player.Init(media);
+                    player.Volume = volume;
+                    ;
+                    Dispatcher.Invoke(() => {
+                        ResetTime();
+                        SetSliderTimeLabel(media.TotalTime);
+                        ChangeTitle(queue[nowQueue].Title);
+                    });
 
-                var time = new TimeSpan(0, 0, 0);
+                    var time = new TimeSpan(0, 0, 0);
 
-                player.Play();
+                    player.Play();
 
-                Complete = true;
+                    Complete = true;
 
-                while (true) {
-                    Thread.Sleep(200);
-                    if (player == null) break;
-                    if (player.PlaybackState == PlaybackState.Paused) continue;
-                    if (player.PlaybackState == PlaybackState.Stopped) break;
-                    if (sliderClick) continue;
-                    if (time != media.CurrentTime) {
-                        Dispatcher.Invoke(() => SetTime(media.CurrentTime));
-                        time = media.CurrentTime;
+                    while (true) {
+                        Thread.Sleep(200);
+                        if (player == null) break;
+                        if (player.PlaybackState == PlaybackState.Paused) continue;
+                        if (player.PlaybackState == PlaybackState.Stopped) break;
+                        if (sliderClick) continue;
+                        if (time != media.CurrentTime) {
+                            Dispatcher.Invoke(() => SetTime(media.CurrentTime));
+                            time = media.CurrentTime;
+                        }
                     }
+                } catch (System.Runtime.InteropServices.COMException) {
+                    Complete = true;
+                    Dispatcher.Invoke(() => MessageBox.Show("「" + data.Title + "」\n再生エラーが発生しました。\nファイルが破損しています。キャッシュを消してもう一度試してみてください。", "JellyParfait - Error",MessageBoxButton.OK,MessageBoxImage.Error));
                 }
             });
+
+
 
             if (!Clicked) {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
@@ -631,5 +671,16 @@ namespace JellyParfait {
             Clicked = false;
         }
 
+        public static double GetDirectorySize(DirectoryInfo dirInfo) {
+            double DirectorySize = 0;
+            foreach (FileInfo fi in dirInfo.GetFiles()) {
+                DirectorySize += fi.Length;
+            }
+            if (DirectorySize != 0) {
+                DirectorySize = Math.Round(DirectorySize / 1024 / 1024,1,MidpointRounding.AwayFromZero);
+                
+            }
+            return DirectorySize;
+        }
     }
 }

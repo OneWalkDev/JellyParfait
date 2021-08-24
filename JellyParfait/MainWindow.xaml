@@ -5,7 +5,7 @@
        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
        mc:Ignorable="d"
-       Title="JellyParfait" Height="650" Width="800"
+       Title="JellyParfait" Height="660" Width="800"
        Icon="./Resources/JellyParfait_alpha 64x64.ico"
        ShowIconOnTitleBar="True"  
        Closing="Window_Closing"
@@ -24,13 +24,14 @@
         <DockPanel Focusable="False">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="ファイル(_F)">
-                    <MenuItem Header="キャッシュを削除"/>
+                    <MenuItem Header="キャッシュを削除" Click="Cache_Click"/>
                     <Separator />
                     <MenuItem Header="終了" Click="Exit_Click"/>
                 </MenuItem>
                 <MenuItem Header="音楽(_M)">
                     <MenuItem Header="mp3ファイルを読み込み" Click="Mp3_Click"/>
                     <MenuItem Header="再生/一時停止" Click="PlayButton_Click"/>
+                    <MenuItem Header="Twitterで共有" Click="Twitter_Click"/>
                     <MenuItem Header="イコライザ"/>
                 </MenuItem>
                 <MenuItem Header="プレイリスト(_P)">
@@ -94,10 +95,11 @@
                             FocusVisualStyle="{x:Null}"
                             MouseUp="MusicQueue_MouseUp"
                             MouseDoubleClick="MusicQueue_MouseDoubleClick"
-                            Loaded="MusicQueue_Loaded">
+                            Loaded="MusicQueue_Loaded"
+                            >
 
                         <ListBox.Background>
-                            <ImageBrush x:Name="MusicQueueBackground"/>
+                            <ImageBrush x:Name="MusicQueueBackground" Stretch="Uniform" />
                         </ListBox.Background>
                         <ListView.ItemTemplate>
                             <DataTemplate>
