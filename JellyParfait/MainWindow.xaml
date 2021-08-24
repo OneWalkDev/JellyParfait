@@ -26,7 +26,7 @@
                 <MenuItem Header="ファイル(_F)">
                     <MenuItem Header="キャッシュを削除" Click="Cache_Click"/>
                     <Separator />
-                    <MenuItem Header="終了" Click="Exit_Click"/>
+                    <MenuItem x:Name="ExitButton" Header="終了" Click="Exit_Click"/>
                 </MenuItem>
                 <MenuItem Header="音楽(_M)">
                     <MenuItem Header="mp3ファイルを読み込み" Click="Mp3_Click"/>
@@ -235,8 +235,8 @@
                         <Slider
                             x:Name="VolumeSlider"
                             IsMoveToPointEnabled ="True"
-                            Maximum="1"
-                            Value="0.5"
+                            Maximum="0.5"
+                            Value="0.25"
                             PreviewMouseLeftButtonUp="VolumeSlider_PreviewMouseUp"
                             SmallChange="0.01"/>
                     </Grid>

@@ -44,8 +44,10 @@ namespace JellyParfait {
 
 
         private void Exit_Click(object sender, EventArgs e) {
-            mainWindow.Close();
-            Shutdown();
+            if (!mainWindow.IsVisible) {
+                mainWindow.Show();
+            }
+            mainWindow.ClickExitButtonFromApp();
         }
     }
 }

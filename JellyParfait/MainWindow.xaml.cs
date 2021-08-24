@@ -19,6 +19,8 @@ using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
 using System.Windows.Data;
 using System.Windows.Controls;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace JellyParfait {
     /// <summary>
@@ -100,18 +102,30 @@ namespace JellyParfait {
 
         private async void Cache_Click(object sender, RoutedEventArgs e) {
             double FilesSize = GetDirectorySize(new DirectoryInfo(cachePath));
-            var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約"+FilesSize.ToString()+"MBです\n削除しますか？", MessageDialogStyle.AffirmativeAndNegative,new MetroDialogSettings() {
+            var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約"+FilesSize.ToString()+"MBです\n削除しますか？\n(再生中は音楽が停止し、キューがリセットされます)", MessageDialogStyle.AffirmativeAndNegative,new MetroDialogSettings() {
                 AffirmativeButtonText = "はい",
                 NegativeButtonText = "いいえ"
             });
 
-            Debug.Print(msgbox.ToString());
             if (msgbox == MessageDialogResult.Negative) return;
+            queue = null;
+            ReloadListView();
+            if(player != null) {
+                PlayerDispose();
+            }
+            nowQueue = -1;
 
 
         }
 
-        public void Exit_Click(object sender, RoutedEventArgs e) {
+        public async void Exit_Click(object sender, RoutedEventArgs e) {
+            if (download) {
+                var msgbox = await this.ShowMessageAsync("JellyParfait", "現在キャッシュダウンロード中です。\n今終了するとキャッシュファイルが破損する可能性がありますが終了しますか？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() {
+                    AffirmativeButtonText = "はい",
+                    NegativeButtonText = "いいえ"
+                });
+                if (msgbox == MessageDialogResult.Negative) return;
+            }
             if (IsPlay()) {
                 Stop();
                 player.Dispose();
@@ -384,31 +398,22 @@ namespace JellyParfait {
             } else {
                 MusicQueueBackground.ImageSource = null;
             }
-
             var volume = (float)VolumeSlider.Value;
-
 
             await Task.Run(() => {
                 try {
                     player = new WaveOutEvent() { DesiredLatency = 200 };
-                    media = new MediaFoundationReader(data.Url) {
-                        Position = 0
-                    };
+                    media = new MediaFoundationReader(data.Url);
                     player.Init(media);
                     player.Volume = volume;
-                    ;
                     Dispatcher.Invoke(() => {
                         ResetTime();
                         SetSliderTimeLabel(media.TotalTime);
                         ChangeTitle(queue[nowQueue].Title);
                     });
-
                     var time = new TimeSpan(0, 0, 0);
-
                     player.Play();
-
                     Complete = true;
-
                     while (true) {
                         Thread.Sleep(200);
                         if (player == null) break;
@@ -422,16 +427,12 @@ namespace JellyParfait {
                     }
                 } catch (System.Runtime.InteropServices.COMException) {
                     Complete = true;
-                    Dispatcher.Invoke(() => MessageBox.Show("「" + data.Title + "」\n再生エラーが発生しました。\nファイルが破損しています。キャッシュを消してもう一度試してみてください。", "JellyParfait - Error",MessageBoxButton.OK,MessageBoxImage.Error));
+                    Dispatcher.Invoke(() => MessageBox.Show("「" + data.Title + "」\n再生エラーが発生しました。\nファイルが破損している可能性があります。キャッシュを消してもう一度試してみてください。", "JellyParfait - Error",MessageBoxButton.OK,MessageBoxImage.Error));
                 }
             });
-
-
-
             if (!Clicked) {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
             }
-
             if (nowQueue != data.QueueId) {
                 data.Visibility = Visibility.Hidden;
                 data.Color = "White";
@@ -671,7 +672,7 @@ namespace JellyParfait {
             Clicked = false;
         }
 
-        public static double GetDirectorySize(DirectoryInfo dirInfo) {
+        public double GetDirectorySize(DirectoryInfo dirInfo) {
             double DirectorySize = 0;
             foreach (FileInfo fi in dirInfo.GetFiles()) {
                 DirectorySize += fi.Length;
@@ -681,6 +682,11 @@ namespace JellyParfait {
                 
             }
             return DirectorySize;
+        }
+
+        public void ClickExitButtonFromApp() {
+            var provider = new MenuItemAutomationPeer(ExitButton) as IInvokeProvider;
+            provider.Invoke();
         }
     }
 }
