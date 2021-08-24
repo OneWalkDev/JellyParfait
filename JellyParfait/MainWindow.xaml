@@ -80,7 +80,7 @@
                     <Label x:Name="titleLabel" Content="" VerticalContentAlignment="Center"/>
                     </Grid>
                     <Grid Grid.Column="1" Margin="0,5,0,5" >
-                        <ProgressBar x:Name="Progress" Visibility="Hidden"/>
+                        <ProgressBar x:Name="Progress" Visibility="Hidden" Maximum="4"/>
                     </Grid>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -93,7 +93,8 @@
                             ItemContainerStyle="{StaticResource ContainerStyle}"
                             FocusVisualStyle="{x:Null}"
                             MouseUp="MusicQueue_MouseUp"
-                            MouseDoubleClick="MusicQueue_MouseDoubleClick">
+                            MouseDoubleClick="MusicQueue_MouseDoubleClick"
+                            Loaded="MusicQueue_Loaded">
 
                         <ListBox.Background>
                             <ImageBrush x:Name="MusicQueueBackground"/>
@@ -141,7 +142,7 @@
                                     <Grid Grid.Column="6" HorizontalAlignment="Right">
                                         <StackPanel>
                                             <Button Command="{Binding DisposeCommand}" Style="{DynamicResource Button}">
-                                                <Image Source="./Resources/QueueDisponse.png"/>
+                                                <Image Source="./Resources/QueueDispose.png"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>

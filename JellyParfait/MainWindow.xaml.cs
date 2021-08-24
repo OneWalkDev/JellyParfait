@@ -17,6 +17,8 @@ using System.Windows.Threading;
 using YoutubeExplode;
 using YoutubeExplode.Converter;
 using YoutubeExplode.Videos.Streams;
+using System.Windows.Data;
+using System.Windows.Controls;
 
 namespace JellyParfait {
     /// <summary>
@@ -116,8 +118,7 @@ namespace JellyParfait {
                 Multiselect = false
             };
             if (open.ShowDialog() != true) return;
-
-            var data = new MusicData(this) {
+            queue.Add(new MusicData(this) {
                 QueueId = queue.Count,
                 Title = Path.GetFileNameWithoutExtension(open.FileName),
                 Id = "local",
@@ -126,18 +127,14 @@ namespace JellyParfait {
                 Thumbnails = null,
                 Visibility = Visibility.Hidden,
                 Color = "white",
-            };
-
-            queue.Add(data);
+            });
             ReloadListView();
-
             if (queue.Count == 1) {
                 nowQueue = 0;
-                PlayMusic(data);
+                PlayMusic(queue[nowQueue]);
             }
 
         }
-
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) Search();
@@ -160,17 +157,24 @@ namespace JellyParfait {
             Search();
         }
 
-        private void MusicQueue_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        private void MusicQueue_MouseUp(object sender, MouseButtonEventArgs e) {
             mouseButton = e.ChangedButton;
         }
 
-        private void MusicQueue_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        private void MusicQueue_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
             if (nowQueue != MusicQueue.SelectedIndex) {
                 if (MusicQueue.SelectedIndex != -1) {
                     SetQueue(MusicQueue.SelectedIndex);
                 }
             }
             MusicQueue.SelectedIndex = -1;
+        }
+
+        private void MusicQueue_Loaded(object sender, RoutedEventArgs e) {
+            Binding myBinding = new Binding();
+            myBinding.Source = queue;
+            myBinding.NotifyOnSourceUpdated = true;
+            BindingOperations.SetBinding(MusicQueue, ItemsControl.ItemsSourceProperty, myBinding);
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
@@ -209,7 +213,10 @@ namespace JellyParfait {
             if (player != null) {
                 player.Volume = (float)VolumeSlider.Value;
             }
+        }
 
+        private void moveProgressBar(int value) {
+            Dispatcher.Invoke(() => Progress.Value = value );
         }
 
         private void Search() {
@@ -222,6 +229,7 @@ namespace JellyParfait {
 
         private async void CheckURL(string youtubeUrl) {
             Searched = youtubeUrl;
+            Progress.Visibility = Visibility.Visible;
             try {
                 var youtube = new YoutubeClient();
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
@@ -242,19 +250,15 @@ namespace JellyParfait {
                 await Task.Run(() => AddQueue(youtubeUrl));
             } finally {
                 Searched = String.Empty;
+                Progress.Visibility = Visibility.Hidden;
             }
         }
 
         private void AddQueue(string youtubeUrl) {
-            Dispatcher.Invoke(() => {
-                Progress.Visibility = Visibility.Visible;
-                Progress.Value = 0;
-                Progress.Maximum = 4;
-            });
+            moveProgressBar(0);
             try {
-                
                 MusicData musicData = null;
-                musicData = GetVideoObject(youtubeUrl).Result;
+                musicData =  GetVideoObject(youtubeUrl).Result;
                 if (musicData == null) return;
                 if (musicData.Url == string.Empty) return;
 
@@ -267,26 +271,17 @@ namespace JellyParfait {
                 }
             } catch (AggregateException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
-            } finally {
-                Dispatcher.Invoke(() => {
-                    Progress.Visibility = Visibility.Hidden;
-                });
             }
-
         }
 
         private async Task<MusicData> GetVideoObject(string youtubeUrl) {
             try {
-                Dispatcher.Invoke(() => {
-                    Progress.Value = 1;
-                });
+                moveProgressBar(1);
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
                 var music = cachePath + video.Id + ".mp3";
                 var image = cachePath + video.Id + ".jpg";
-                Dispatcher.Invoke(() => {
-                    Progress.Value = 2;
-                });
+                moveProgressBar(2);
 
                 if (!File.Exists(music)) {
                     if (TimeSpan.Compare(video.Duration.Value, new TimeSpan(0, 30, 0)) == 1) {
@@ -301,28 +296,24 @@ namespace JellyParfait {
                     var info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
                     await youtubeClient.Videos.Streams.DownloadAsync(info, music);
                 }
-                Dispatcher.Invoke(() => {
-                    Progress.Value = 3;
-                });
+
+                moveProgressBar(3);
                 if (!File.Exists(image)) {
-                    using (WebClient client = new WebClient()) {
-                        await Task.Run(()=>client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image));
-                    }
+                    using WebClient client = new WebClient();
+                    await Task.Run(() => client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image));
                 }
-                Dispatcher.Invoke(() => {
-                    Progress.Value = 4;
-                });
-                var data = new MusicData(this) {
+
+                moveProgressBar(4);
+                return new MusicData(this) {
                     QueueId = queue.Count,
                     Title = video.Title,
                     Id = video.Id,
                     Url = music,
-                    YoutubeUrl = youtubeUrl,           
+                    YoutubeUrl = youtubeUrl,
                     Thumbnails = image,
-                    Visibility = Visibility.Hidden,                   
+                    Visibility = Visibility.Hidden,
                     Color = "white",
-                };
-                return data;
+                }; ;
             } catch (System.Net.Http.HttpRequestException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
@@ -512,8 +503,7 @@ namespace JellyParfait {
         }
 
         private void ReloadListView() {
-            MusicQueue.ItemsSource = null;
-            MusicQueue.ItemsSource = queue;
+            MusicQueue.Items.Refresh();
         }
 
         private void SetTime(TimeSpan time) {
@@ -640,5 +630,6 @@ namespace JellyParfait {
             ReloadListView();
             Clicked = false;
         }
+
     }
 }
