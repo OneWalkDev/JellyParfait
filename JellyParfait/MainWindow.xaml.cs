@@ -107,6 +107,7 @@ namespace JellyParfait {
                 Stop();
                 player.Dispose();
             }
+            App.DeleteNotifyIcon();
         }
 
         private async void Cache_Click(object sender, RoutedEventArgs e) {
@@ -136,7 +137,6 @@ namespace JellyParfait {
         }
 
         public async void Exit_Click(object sender, RoutedEventArgs e) {
-            download = true;
             if (download) {
                 var msgbox = await this.ShowMessageAsync("JellyParfait", "現在キャッシュダウンロード中です。\n今終了するとキャッシュファイルが破損する可能性がありますが終了しますか？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() {
                     AffirmativeButtonText = "はい",
@@ -451,11 +451,6 @@ namespace JellyParfait {
             if (!Clicked) {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
             }
-            if (nowQueue != data.QueueId) {
-                data.Visibility = Visibility.Hidden;
-                data.Color = "White";
-                ReloadListView();
-            }
         }
 
         public bool IsPlay() {
@@ -497,6 +492,9 @@ namespace JellyParfait {
             if (queue.Count == 0) return;
             Clicked = true;
             PlayerDispose();
+            queue[nowQueue].Visibility = Visibility.Hidden;
+            queue[nowQueue].Color = "White";
+            ReloadListView();
             if (nowQueue == 0) {
                 nowQueue = queue.Count - 1;
             } else {
@@ -541,6 +539,11 @@ namespace JellyParfait {
                     }
                 }
             }
+
+            queue[nowQueue].Visibility = Visibility.Hidden;
+            queue[nowQueue].Color = "White";
+            ReloadListView();
+
 
             if (queue.Count <= nowQueue + 1) {
                 nowQueue = 0;
@@ -614,6 +617,9 @@ namespace JellyParfait {
             if (Clicked) return;
             if (IsPlay()) Stop();
             Clicked = true;
+            queue[nowQueue].Visibility = Visibility.Hidden;
+            queue[nowQueue].Color = "White";
+            ReloadListView();
             nowQueue = num;
             PlayerDispose();
             PlayMusic(queue[num]);
@@ -708,6 +714,7 @@ namespace JellyParfait {
         public void ClickExitButtonFromApp() {
             var provider = new MenuItemAutomationPeer(ExitButton) as IInvokeProvider;
             provider.Invoke();
+
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Windows;
 
+
 namespace JellyParfait {
     /// <summary>
     /// App.xaml の相互作用ロジック
     /// </summary>
     public partial class App : Application {
         private MainWindow mainWindow;
+
+        private static System.Windows.Forms.NotifyIcon notifyIcon;
 
         private void Application_Startup(object sender, StartupEventArgs e) {
             mainWindow = new MainWindow();
@@ -23,7 +26,7 @@ namespace JellyParfait {
             var menu = new System.Windows.Forms.ContextMenuStrip();
             menu.Items.Add("ウインドウを表示", null, Show_Click);
             menu.Items.Add("終了", null, Exit_Click);
-            var notifyIcon = new System.Windows.Forms.NotifyIcon {
+            notifyIcon = new System.Windows.Forms.NotifyIcon {
                 Visible = true,
                 Icon = new System.Drawing.Icon(icon),
                 Text = "JellyParfait",
@@ -47,7 +50,13 @@ namespace JellyParfait {
             if (!mainWindow.IsVisible) {
                 mainWindow.Show();
             }
+            DeleteNotifyIcon();
             mainWindow.ClickExitButtonFromApp();
+        }
+
+        public static void DeleteNotifyIcon() {
+            notifyIcon.Visible = false;
+            notifyIcon.Dispose();
         }
     }
 }

@@ -236,9 +236,9 @@
                             x:Name="VolumeSlider"
                             IsMoveToPointEnabled ="True"
                             Maximum="0.5"
-                            Value="0.25"
+                            Value="0.1"
                             PreviewMouseLeftButtonUp="VolumeSlider_PreviewMouseUp"
-                            SmallChange="0.01"/>
+                            SmallChange="0.001"/>
                     </Grid>
                 </Grid>
             </Grid>
