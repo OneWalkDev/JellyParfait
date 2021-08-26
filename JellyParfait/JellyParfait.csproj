@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resources/JellyParfait_alpha 64x64.ico</ApplicationIcon>
+    <ApplicationIcon>Resources/JellyParfait_alpha_64x64.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
     <Authors>yurisi</Authors>
     <Company>yurisi</Company>
@@ -15,16 +15,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\JellyParfait_alpha 64x64.ico" />
+    <None Remove="Resources\JellyParfait_alpha_64x64.ico" />
     <None Remove="Resources\Loop.png" />
     <None Remove="Resources\next.png" />
     <None Remove="Resources\pause.png" />
     <None Remove="Resources\play.png" />
     <None Remove="Resources\prev.png" />
-    <None Remove="Resources\QuereDisponse.png" />
-    <None Remove="Resources\QuereDown.png" />
-    <None Remove="Resources\QuerePlay.png" />
-    <None Remove="Resources\QuereUp.png" />
+    <None Remove="Resources\QueueDisponse.png" />
+    <None Remove="Resources\QueueDown.png" />
+    <None Remove="Resources\QueuePlay.png" />
+    <None Remove="Resources\QueueUp.png" />
     <None Remove="Resources\QueueDispose.png" />
     <None Remove="Resources\QueueDown.png" />
     <None Remove="Resources\QueuePlay.png" />
@@ -40,14 +40,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\JellyParfait_alpha 64x64.ico">
+    <Resource Include="Resources\JellyParfait_alpha_64x64.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.4.7" />
-    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.8.0" />
+    <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="NAudio" Version="2.0.1" />
     <PackageReference Include="YoutubeExplode" Version="6.0.5" />
     <PackageReference Include="YoutubeExplode.Converter" Version="2.1.0" />

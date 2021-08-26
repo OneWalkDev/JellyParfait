@@ -1,0 +1,203 @@
+﻿<mah:MetroWindow x:Class="JellyParfait.MVVM.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+        xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JellyParfait.MVVM.View"
+        xmlns:vm="clr-namespace:JellyParfait.MVVM.ViewModel"
+        mc:Ignorable="d"
+        Title="JellyParfait" Height="450" Width="800"
+        Icon="/Resources/JellyParfait_alpha_64x64.ico"
+        ShowIconOnTitleBar="True"
+        dialog:DialogParticipation.Register="{Binding}">
+
+    <mah:MetroWindow.Resources>
+        <Style x:Key="StatusIconStyle" TargetType="{x:Type Image}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}}}" Value="False">
+                    <Setter Property="Source" Value="{x:Null}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}}}" Value="True">
+                    <Setter Property="Source" Value="pack://application:,,,/JellyParfait;component/Resources/QueuePlay.png"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="PlaylistItemTemplate" DataType="{x:Type vm:MusicWrap}">
+            <Grid Margin="10, 1, 10, 1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+                    Command="{Binding Path=DataContext.ForwardCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type mah:MetroWindow}}}"
+                    CommandParameter="{Binding Index}"
+                    Style="{StaticResource ButtonStyle}">
+                    <Image Source="pack://application:,,,/JellyParfait;component/Resources/QueueUp.png"/>
+                </Button>
+
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding Path=DataContext.BackwardCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type mah:MetroWindow}}}"
+                    CommandParameter="{Binding Index}"
+                    Style="{StaticResource ButtonStyle}">
+                    <Image Source="pack://application:,,,/JellyParfait;component/Resources/QueueDown.png"/>
+                </Button>
+
+                <!--<Image Grid.Column="3" Style="{StaticResource StatusIconStyle}"/>-->
+
+                <TextBlock
+                    Grid.Column="4"
+                    VerticalAlignment="Center"
+                    Text="{Binding Music.Title}"/>
+
+                <Button
+                    Grid.Column="5"
+                    Command="{Binding Path=DataContext.DeleteCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type mah:MetroWindow}}}"
+                    CommandParameter="{Binding Index}"
+                    Style="{StaticResource ButtonStyle}">
+                    <Image Source="pack://application:,,,/JellyParfait;component/Resources/QueueDispose.png"/>
+                </Button>
+            </Grid>
+        </DataTemplate>
+    </mah:MetroWindow.Resources>
+
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button Command="{Binding OpenMusicFlyoutCommand}" ToolTip="Add Music">
+                <icon:PackIconMaterial Kind="MusicNotePlus"/>
+            </Button>
+            <Button Command="{Binding OpenPlaylistFlyoutCommand}" ToolTip="Add Music">
+                <icon:PackIconMaterial Kind="PlaylistPlus"/>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+
+    <mah:MetroWindow.Flyouts>
+        <mah:FlyoutsControl>
+            <mah:Flyout IsModal="True" Position="Top" IsOpen="{Binding IsMusicFlyoutOpen}" TitleVisibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        Text="Add Music"
+                        FontSize="20"/>
+
+                    <TextBox
+                        x:Name="MusicUrlTextBox"
+                        Grid.Row="1" Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Margin="2"
+                        mah:TextBoxHelper.Watermark="Video URL..."
+                        mah:TextBoxHelper.ButtonCommand="{Binding AddMusicCommand}"
+                        mah:TextBoxHelper.ButtonCommandParameter="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+
+                    <Button
+                        Grid.Row="1" Grid.Column="1"
+                        Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        Margin="2"
+                        Command="{Binding AddMusicCommand}"
+                        CommandParameter="{Binding Path=Text, ElementName=MusicUrlTextBox}">
+                        <icon:PackIconMaterial Kind="ArrowRightThick"/>
+                    </Button>
+                </Grid>
+            </mah:Flyout>
+
+            <mah:Flyout IsModal="True" Position="Top" IsOpen="{Binding IsPlaylistFlyoutOpen}" TitleVisibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                        VerticalAlignment="Center"
+                        Text="Add Playlist"
+                        FontSize="20"/>
+
+                    <TextBox
+                        x:Name="PlaylistUrlTextBox"
+                        Grid.Row="1" Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Margin="2"
+                        mah:TextBoxHelper.Watermark="Playlist URL..."
+                        mah:TextBoxHelper.ButtonCommand="{Binding AddPlaylistCommand}"
+                        mah:TextBoxHelper.ButtonCommandParameter="{Binding Text, RelativeSource={RelativeSource Mode=Self}}"/>
+
+                    <Button
+                        Grid.Row="1" Grid.Column="1"
+                        Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                        Margin="2"
+                        Command="{Binding AddPlaylistCommand}"
+                        CommandParameter="{Binding Path=Text, ElementName=PlaylistUrlTextBox}">
+                        <icon:PackIconMaterial Kind="ArrowRightThick"/>
+                    </Button>
+                </Grid>
+            </mah:Flyout>
+        </mah:FlyoutsControl>
+    </mah:MetroWindow.Flyouts>
+    
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="ファイル(_F)">
+                <MenuItem Header="キャッシュを削除"/>
+                <Separator/>
+                <MenuItem Header="終了"/>
+            </MenuItem>
+            <MenuItem Header="音楽(_M)">
+                <MenuItem Header="mp3ファイルを読み込み"/>
+                <MenuItem Header="再生"/>
+                <MenuItem Header="一時停止"/>
+                <MenuItem Header="停止"/>
+                <MenuItem Header="1曲ループ"/>
+                <MenuItem Header="ランダム再生"/>
+                <MenuItem Header="イコライザ"/>
+            </MenuItem>
+            <MenuItem Header="プレイリスト(_P)">
+                <MenuItem Header="プレイリストの読込"/>
+                <MenuItem Header="現在のプレイリストを保存"/>
+            </MenuItem>
+            <MenuItem Header="ヘルプ(_H)">
+                <MenuItem Header="バージョン情報"/>
+            </MenuItem>
+        </Menu>
+
+        <local:Player
+            x:Name="Player"
+            DockPanel.Dock="Bottom" Margin="0, 5, 0, 0"
+            WithPlaylist="True"
+            PrevCommand="{Binding DataContext.PrevCommand, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+            NextCommand="{Binding DataContext.NextCommand, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+
+        <ListView
+            BorderBrush="#cccccc"
+            BorderThickness="1"
+            SelectionMode="Single"
+            ItemsSource="{Binding Playlist}"
+            SelectedIndex="{Binding SelectedIndex}"
+            ItemTemplate="{DynamicResource PlaylistItemTemplate}"/>
+    </DockPanel>
+</mah:MetroWindow>

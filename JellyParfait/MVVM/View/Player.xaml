@@ -1,0 +1,106 @@
+﻿<UserControl x:Class="JellyParfait.MVVM.View.Player"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:local="clr-namespace:JellyParfait.MVVM.View"
+             xmlns:conv="clr-namespace:JellyParfait.Converter"
+             mc:Ignorable="d" 
+             d:DesignHeight="60" d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+        <conv:TimeSpanConverter x:Key="TimeSpanConverter"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Column="1"
+                Content="{Binding Current, Converter={StaticResource TimeSpanConverter}}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+
+            <Slider
+                Grid.Column="2"
+                Value="{Binding Elapsed}"
+                Minimum="0" Maximum="{Binding TotalSec}"/>
+
+            <Label
+                Grid.Column="3"
+                Content="{Binding Total, Converter={StaticResource TimeSpanConverter}}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Grid>
+
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center">
+
+            <ToggleButton
+                IsChecked="{Binding Loop}"
+                Style="{StaticResource ToggleStyle}"
+                Width="40">
+                <Image Source="pack://application:,,,/JellyParfait;component/Resources/Loop.png"/>
+            </ToggleButton>
+
+            <Button
+                Command="{Binding PrevCommand}"
+                Visibility="{Binding WithPlaylist, Converter={StaticResource BooleanToVisibility}}"
+                Style="{StaticResource ButtonStyle}"
+                Width="40">
+                <Image Source="pack://application:,,,/JellyParfait;component/Resources/prev.png"/>
+            </Button>
+
+            <Button
+                Command="{Binding PlayCommand}"
+                Style="{StaticResource ButtonStyle}"
+                Width="40">
+                <Image x:Name="PlayButtonImage">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" Value="False">
+                                    <Setter Property="Source" Value="pack://application:,,,/JellyParfait;component/Resources/play.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsPlaying, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" Value="True">
+                                    <Setter Property="Source" Value="pack://application:,,,/JellyParfait;component/Resources/pause.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+
+            <Button
+                Command="{Binding NextCommand}"
+                Visibility="{Binding WithPlaylist, Converter={StaticResource BooleanToVisibility}}"
+                Style="{StaticResource ButtonStyle}"
+                Width="40">
+                <Image Source="pack://application:,,,/JellyParfait;component/Resources/next.png"/>
+            </Button>
+
+            <ToggleButton
+                IsChecked="{Binding Shuffle}"
+                Style="{StaticResource ToggleStyle}"
+                Width="40">
+                <Image Source="pack://application:,,,/JellyParfait;component/Resources/Shuffle.png"/>
+            </ToggleButton>
+        </StackPanel>
+    </Grid>
+</UserControl>
