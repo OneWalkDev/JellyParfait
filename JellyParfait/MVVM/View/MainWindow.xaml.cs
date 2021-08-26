@@ -15,5 +15,9 @@ namespace JellyParfait.MVVM.View
             var vm = new ViewModel.MainWindowViewModel(DialogCoordinator.Instance, Player);
             DataContext = vm;
         }
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = true;
+            Hide();
+        }
     }
 }

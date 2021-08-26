@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using JellyParfait.MVVM.Model;
+using JellyParfait.MVVM.View;
 using MahApps.Metro.Controls.Dialogs;
 using NAudio.Wave;
 using System;
@@ -8,16 +9,13 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using YoutubeExplode;
 using YoutubeExplode.Videos.Streams;
 
-namespace JellyParfait.MVVM.ViewModel
-{
+namespace JellyParfait.MVVM.ViewModel {
     public class MainWindowViewModel : DependencyObject
     {
         private readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\";

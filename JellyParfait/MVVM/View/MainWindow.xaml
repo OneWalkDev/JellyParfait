@@ -12,7 +12,8 @@
         Title="JellyParfait" Height="450" Width="800"
         Icon="/Resources/JellyParfait_alpha_64x64.ico"
         ShowIconOnTitleBar="True"
-        dialog:DialogParticipation.Register="{Binding}">
+        dialog:DialogParticipation.Register="{Binding}"
+        Closing="MetroWindow_Closing">
 
     <mah:MetroWindow.Resources>
         <Style x:Key="StatusIconStyle" TargetType="{x:Type Image}">
