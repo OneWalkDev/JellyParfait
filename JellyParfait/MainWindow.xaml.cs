@@ -75,19 +75,10 @@ namespace JellyParfait {
         /// </summary>
         private string Searched = String.Empty;
 
-        /// <summary>
-        /// ダウンロード中か確認するフラグ
-        /// </summary>
         private bool download;
 
-        /// <summary>
-        /// 初起動か確認するフラグ
-        /// </summary>
         private bool first;
 
-        /// <summary>
-        /// 押されたマウスのボタンを格納
-        /// </summary>
         private MouseButton mouseButton;
 
 
@@ -99,7 +90,7 @@ namespace JellyParfait {
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             e.Cancel = true;
-            Hide();
+            this.Hide();
         }
 
         private void Window_Closed(object sender, EventArgs e) {
@@ -110,33 +101,24 @@ namespace JellyParfait {
         }
 
         private async void Cache_Click(object sender, RoutedEventArgs e) {
-            if (download) {
-                await this.ShowMessageAsync("JellyParfait", "現在キャッシュダウンロード中です。ダウンロードが終わるまでお待ち下さい。");
-                return;
-            }
-            var Directory = new DirectoryInfo(cachePath);
-            double FilesSize = GetDirectorySize(Directory);
-            if (player != null) {
-                await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約" + FilesSize.ToString() + "MBです\nキューに音楽が入っています。再起動後、何も再生せずもう一度実行してください。");
-                return;
-            }            
+            double FilesSize = GetDirectorySize(new DirectoryInfo(cachePath));
             var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約"+FilesSize.ToString()+"MBです\n削除しますか？\n(再生中は音楽が停止し、キューがリセットされます)", MessageDialogStyle.AffirmativeAndNegative,new MetroDialogSettings() {
                 AffirmativeButtonText = "はい",
                 NegativeButtonText = "いいえ"
             });
 
             if (msgbox == MessageDialogResult.Negative) return;
-            foreach (FileInfo file in Directory.GetFiles()) {
-                try {
-                    file.Delete();
-                } catch { }
+            queue = null;
+            ReloadListView();
+            if(player != null) {
+                PlayerDispose();
             }
+            nowQueue = -1;
 
 
         }
 
         public async void Exit_Click(object sender, RoutedEventArgs e) {
-            download = true;
             if (download) {
                 var msgbox = await this.ShowMessageAsync("JellyParfait", "現在キャッシュダウンロード中です。\n今終了するとキャッシュファイルが破損する可能性がありますが終了しますか？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() {
                     AffirmativeButtonText = "はい",
@@ -194,7 +176,7 @@ namespace JellyParfait {
                     return;
                 }
             }
-            MessageBox.Show("現在何も再生されていません。","JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("JellyParfait", "現在何も再生されていません。", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -479,8 +461,6 @@ namespace JellyParfait {
 
         public void PlayerDispose() {
             player.Dispose();
-            player = null;
-            MusicQueueBackground.ImageSource = null;
             ChangeTitle(string.Empty);
             ResetTime();
         }
@@ -680,7 +660,6 @@ namespace JellyParfait {
             queue.RemoveAt(queueId);
             if (nowQueue == queueId) {
                 PlayerDispose();
-
             }
             foreach (MusicData music in queue) {
                 music.QueueId = count;
