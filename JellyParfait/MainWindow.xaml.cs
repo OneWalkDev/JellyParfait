@@ -332,10 +332,6 @@ namespace JellyParfait {
                 queue.Add(musicData);
                 Dispatcher.Invoke(() => ReloadListView());
 
-                if (queue.Count == 1) {
-                    nowQueue = 0;
-                    Dispatcher.Invoke(() => PlayMusic(musicData));
-                }
             } catch (AggregateException) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
             }
@@ -614,13 +610,15 @@ namespace JellyParfait {
             if (Clicked) return;
             if (IsPlay()) Stop();
             Clicked = true;
-            if (nowQueue != num) {
-                queue[nowQueue].Visibility = Visibility.Hidden;
-                queue[nowQueue].Color = "White";
-                ReloadListView();
+            if (nowQueue != -1) {
+                if (nowQueue != num) {
+                    queue[nowQueue].Visibility = Visibility.Hidden;
+                    queue[nowQueue].Color = "White";
+                    ReloadListView();
+                }
+                PlayerDispose();
             }
             nowQueue = num;
-            PlayerDispose();
             PlayMusic(queue[num]);
             await Task.Run(() => {
                 while (!Complete) {
