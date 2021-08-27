@@ -132,8 +132,6 @@ namespace JellyParfait {
                     file.Delete();
                 } catch { }
             }
-
-
         }
 
         public async void Exit_Click(object sender, RoutedEventArgs e) {
@@ -617,9 +615,11 @@ namespace JellyParfait {
             if (Clicked) return;
             if (IsPlay()) Stop();
             Clicked = true;
-            queue[nowQueue].Visibility = Visibility.Hidden;
-            queue[nowQueue].Color = "White";
-            ReloadListView();
+            if (nowQueue != num) {
+                queue[nowQueue].Visibility = Visibility.Hidden;
+                queue[nowQueue].Color = "White";
+                ReloadListView();
+            }
             nowQueue = num;
             PlayerDispose();
             PlayMusic(queue[num]);
@@ -714,7 +714,6 @@ namespace JellyParfait {
         public void ClickExitButtonFromApp() {
             var provider = new MenuItemAutomationPeer(ExitButton) as IInvokeProvider;
             provider.Invoke();
-
         }
     }
 }
