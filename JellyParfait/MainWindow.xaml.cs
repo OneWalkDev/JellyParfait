@@ -21,6 +21,7 @@ using System.Windows.Data;
 using System.Windows.Controls;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using YoutubeExplode.Converter;
 
 namespace JellyParfait {
     /// <summary>
@@ -93,7 +94,7 @@ namespace JellyParfait {
 
         public MainWindow() {
             InitializeComponent();
-            if (!Directory.Exists(path)) first = true;
+            if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
         }
 
@@ -200,7 +201,7 @@ namespace JellyParfait {
         }
 
         private async void SearchTextBox_Loaded(object sender, RoutedEventArgs e) {
-            //if (first) {
+            if (first) {
                 var settings = new MetroDialogSettings {
                     DefaultText = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
                 };
@@ -209,7 +210,7 @@ namespace JellyParfait {
                 if (dialog == String.Empty) return;
                 searchTextBox.Text = dialog;
                 Search();
-            //}
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
@@ -356,9 +357,7 @@ namespace JellyParfait {
                         });
                         if (result) return null;
                     }
-                    var manifest = await youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
-                    var info = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
-                    await youtubeClient.Videos.Streams.DownloadAsync(info, music);
+                    await youtubeClient.Videos.DownloadAsync(youtubeUrl, music);
                 }
 
                 if (!File.Exists(image)) {
