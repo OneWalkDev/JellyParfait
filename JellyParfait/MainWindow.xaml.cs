@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using JellyParfait.Data;
+using JellyParfait.Model;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using NAudio.Wave;
@@ -16,12 +16,12 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
-using YoutubeExplode.Videos.Streams;
 using System.Windows.Data;
 using System.Windows.Controls;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using YoutubeExplode.Converter;
+using JellyParfait.Windows;
 
 namespace JellyParfait {
     /// <summary>
@@ -36,6 +36,7 @@ namespace JellyParfait {
 
         private readonly string cachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\cache\";
 
+        private readonly string favoPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\favorite\";
         /// <summary>
         /// 音楽の情報
         /// </summary>
@@ -194,6 +195,12 @@ namespace JellyParfait {
                 }
             }
             MessageBox.Show("現在何も再生されていません。","JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void Equalizer_Click(object sender, RoutedEventArgs e) {
+            Equalizer window = new Equalizer();
+            window.Owner = this;
+            window.ShowDialog();
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {

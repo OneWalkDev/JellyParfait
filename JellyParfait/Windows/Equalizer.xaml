@@ -1,0 +1,156 @@
+﻿<Window x:Class="JellyParfait.Windows.Equalizer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JellyParfait.Windows"
+        mc:Ignorable="d"
+        Title="Equalizer" Height="450" Width="800" ResizeMode="NoResize">
+    <Grid>
+        <Grid Margin="30,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <UniformGrid Rows="1" Grid.Row="0">
+                <TextBlock x:Name="EQ_32_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_64_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_125_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_250_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_500_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_1k_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_2k_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_4k_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_8k_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock x:Name="EQ_16k_Text" Text="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Rows="1" Grid.Row="1">
+                <Slider
+                    x:Name="EQ_32"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_64"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_125"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_250"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_500"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_1k"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_2k"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_4k"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_8k"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+                <Slider
+                    x:Name="EQ_16k"
+                    Value="0"
+                    Maximum="16"
+                    Minimum="-16"
+                    SmallChange="1"
+                    TickPlacement="BottomRight"
+                    IsSnapToTickEnabled="True"
+                    Orientation="Vertical"
+                    ValueChanged="EQ_ValueChanged"
+                />
+
+            </UniformGrid>
+            <UniformGrid Rows="1" Grid.Row="2">
+                <TextBlock Text="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="64" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="125" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="250" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="500" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="1k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="2k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="4k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="8k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="16k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </UniformGrid>
+        </Grid>
+        
+    </Grid>
+</Window>

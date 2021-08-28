@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace JellyParfait.Data {
+namespace JellyParfait.Model {
 
     public class MusicData {
 

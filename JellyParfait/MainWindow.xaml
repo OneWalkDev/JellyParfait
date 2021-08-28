@@ -32,7 +32,7 @@
                     <MenuItem Header="mp3ファイルを読み込み" Click="Mp3_Click"/>
                     <MenuItem Header="再生/一時停止" Click="PlayButton_Click"/>
                     <MenuItem Header="Twitterで共有" Click="Twitter_Click"/>
-                    <MenuItem Header="イコライザ"/>
+                    <MenuItem Header="イコライザ" Click="Equalizer_Click"/>
                 </MenuItem>
                 <MenuItem Header="プレイリスト(_P)">
                     <MenuItem Header="プレイリストの読込"/>
