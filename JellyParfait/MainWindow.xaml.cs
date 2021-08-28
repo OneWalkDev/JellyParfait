@@ -36,7 +36,8 @@ namespace JellyParfait {
 
         private readonly string cachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\cache\";
 
-        private readonly string favoPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\favorite\";
+        private readonly FavoriteTextFile FileReader = new FavoriteTextFile();
+
         /// <summary>
         /// 音楽の情報
         /// </summary>
@@ -99,8 +100,7 @@ namespace JellyParfait {
             InitializeComponent();
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
-            bands = new EqualizerBand[]
-                {
+            bands = new EqualizerBand[]{
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = 0},
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = 0},
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 125, Gain = 0},
@@ -134,17 +134,13 @@ namespace JellyParfait {
                 return;
             }
             var Directory = new DirectoryInfo(cachePath);
-            double FilesSize = GetDirectorySize(Directory);
-            if (player != null) {
-                await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約" + FilesSize.ToString() + "MBです\nキューに音楽が入っています。再起動後、何も再生せずもう一度実行してください。");
-                return;
-            }            
+            double FilesSize = GetDirectorySize(Directory);         
             var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約"+FilesSize.ToString()+"MBです\n削除しますか？\n(再生中は音楽が停止し、キューがリセットされます)", MessageDialogStyle.AffirmativeAndNegative,new MetroDialogSettings() {
                 AffirmativeButtonText = "はい",
                 NegativeButtonText = "いいえ"
             });
-
             if (msgbox == MessageDialogResult.Negative) return;
+            Reset();
             foreach (FileInfo file in Directory.GetFiles()) {
                 try {
                     file.Delete();
@@ -171,7 +167,7 @@ namespace JellyParfait {
             await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
-        private void Mp3_Click(object sender, RoutedEventArgs e) {
+        /*private void Mp3_Click(object sender, RoutedEventArgs e) {
             var open = new OpenFileDialog() {
                 Title = "mp3ファイルの選択",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -194,7 +190,7 @@ namespace JellyParfait {
                 nowQueue = 0;
                 PlayMusic(queue[nowQueue]);
             }
-        }
+        }*/
 
         private void Twitter_Click(object sender, RoutedEventArgs e) {
             if (player != null) {
@@ -217,6 +213,27 @@ namespace JellyParfait {
             EqualizerWindow window = new EqualizerWindow(this);
             window.Owner = this;
             window.ShowDialog();
+        }
+
+        public async void ReadPlayList_Click(object sender, RoutedEventArgs e) {
+            var open = new OpenFileDialog() {
+                Title = "お気に入りファイルの選択",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\favorite\",
+                Filter = "お気に入りファイル(*.favo;*.favorite)|*.favo;*.favorite|テキストファイル(*.txt;*.text)|*.txt;*.text",
+                Multiselect = false
+            };
+            if (open.ShowDialog() != true) return;
+            foreach(var Url in FileReader.GetURLs(open.FileName)) {
+                CheckURL(Url);
+            }
+        }
+
+        public async void SavePlayList_Click(object sender, RoutedEventArgs e) {
+            if (queue != null) {
+                FileReader.Save(queue);
+            } else {
+                MessageBox.Show("現在キューに音楽が入っていません。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -256,7 +273,7 @@ namespace JellyParfait {
         private void MusicQueue_Loaded(object sender, RoutedEventArgs e) {
             Binding myBinding = new Binding();
             myBinding.Source = queue;
-            myBinding.NotifyOnSourceUpdated = true;
+            myBinding.Delay = 1000;
             BindingOperations.SetBinding(MusicQueue, ItemsControl.ItemsSourceProperty, myBinding);
         }
 
@@ -489,9 +506,29 @@ namespace JellyParfait {
             }
         }
 
+        public void Reset() {
+            queue.Clear();
+            if (player != null) {
+                player.Dispose();
+                player = null;
+            }
+            if (media != null) {
+                media.Dispose();
+                media = null;
+            }
+            MusicQueueBackground.ImageSource = null;
+            ChangeTitle(string.Empty);
+            ResetTime();
+            PlayButton.Content = Resources["Play"];
+            ReloadListView();
+            nowQueue = -1;
+        }
+
         public void PlayerDispose() {
             player.Dispose();
             player = null;
+            media.Dispose();
+            media = null;
             MusicQueueBackground.ImageSource = null;
             ChangeTitle(string.Empty);
             ResetTime();
@@ -744,5 +781,6 @@ namespace JellyParfait {
         public void ChangeEqualizer(int index,int value) {
             bands[index].Gain = value;
         }
+
     }
 }
