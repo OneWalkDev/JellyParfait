@@ -461,9 +461,8 @@ namespace JellyParfait {
             await Task.Run(() => {
                 try {
                     player = new WaveOutEvent() { DesiredLatency = 200 };
-                    media = new AudioFileReader(data.Url);
-                    new Equalizer(media,bands);
-                    player.Init(media);
+                    media = new AudioFileReader(data.Url);      
+                    player.Init(new Equalizer(media, bands));
                     player.Volume = volume;
                     Dispatcher.Invoke(() => {
                         ResetTime();
@@ -476,6 +475,7 @@ namespace JellyParfait {
                     while (true) {
                         Thread.Sleep(200);
                         if (player == null) break;
+                        if (media == null) break;
                         if (player.PlaybackState == PlaybackState.Paused) continue;
                         if (player.PlaybackState == PlaybackState.Stopped) break;
                         if (sliderClick) continue;
