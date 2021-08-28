@@ -1,4 +1,4 @@
-﻿<Window x:Class="JellyParfait.Windows.Equalizer"
+﻿<Window x:Class="JellyParfait.Windows.EqualizerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -148,7 +148,7 @@
                 <TextBlock Text="2k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <TextBlock Text="4k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <TextBlock Text="8k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBlock Text="16k" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="16k" HorizontalAlignment="Center" VerticalAlignment="Center" Loaded="TextBlock_Loaded"/>
             </UniformGrid>
         </Grid>
         

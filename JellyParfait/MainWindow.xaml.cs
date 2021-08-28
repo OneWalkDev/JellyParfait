@@ -40,7 +40,7 @@ namespace JellyParfait {
         /// <summary>
         /// 音楽の情報
         /// </summary>
-        private MediaFoundationReader media;
+        private AudioFileReader media;
 
         /// <summary>
         /// プレイヤー
@@ -92,11 +92,27 @@ namespace JellyParfait {
         /// </summary>
         private MouseButton mouseButton;
 
+        private EqualizerBand[] bands;
+
 
         public MainWindow() {
             InitializeComponent();
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
+            bands = new EqualizerBand[]
+                {
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 125, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 250, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 500, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 1000, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 2000, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 4000, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 8000, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 12000, Gain = 0},
+                };
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -198,7 +214,7 @@ namespace JellyParfait {
         }
 
         private void Equalizer_Click(object sender, RoutedEventArgs e) {
-            Equalizer window = new Equalizer();
+            EqualizerWindow window = new EqualizerWindow(this);
             window.Owner = this;
             window.ShowDialog();
         }
@@ -421,7 +437,8 @@ namespace JellyParfait {
             await Task.Run(() => {
                 try {
                     player = new WaveOutEvent() { DesiredLatency = 200 };
-                    media = new MediaFoundationReader(data.Url);
+                    media = new AudioFileReader(data.Url);
+                    new Equalizer(media,bands);
                     player.Init(media);
                     player.Volume = volume;
                     Dispatcher.Invoke(() => {
@@ -448,7 +465,7 @@ namespace JellyParfait {
                     Dispatcher.Invoke(() => MessageBox.Show("「" + data.Title + "」\n再生エラーが発生しました。\nファイルが破損している可能性があります。キャッシュを消してもう一度試してみてください。", "JellyParfait - Error",MessageBoxButton.OK,MessageBoxImage.Error));
                 }
             });
-            if (!Clicked) {
+            if (!Clicked && player != null) {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
             }
         }
@@ -718,6 +735,14 @@ namespace JellyParfait {
         public void ClickExitButtonFromApp() {
             var provider = new MenuItemAutomationPeer(ExitButton) as IInvokeProvider;
             provider.Invoke();
+        }
+
+        public EqualizerBand[] GetEqualizer() {
+            return bands;
+        }
+
+        public void ChangeEqualizer(int index,int value) {
+            bands[index].Gain = value;
         }
     }
 }
