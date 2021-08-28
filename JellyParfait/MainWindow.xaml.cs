@@ -100,6 +100,7 @@ namespace JellyParfait {
             InitializeComponent();
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
+            Directory.CreateDirectory(path+"favorite");
             bands = new EqualizerBand[]{
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = 0},
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = 0},
@@ -223,13 +224,20 @@ namespace JellyParfait {
                 Multiselect = false
             };
             if (open.ShowDialog() != true) return;
-            foreach(var Url in FileReader.GetURLs(open.FileName)) {
+            if (queue.Count != 0) {
+                var msgbox = await this.ShowMessageAsync("JellyParfait", "キューをリセットしますか？", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() {
+                    AffirmativeButtonText = "はい",
+                    NegativeButtonText = "いいえ"
+                });
+                if (msgbox == MessageDialogResult.Affirmative) Reset();
+            }
+            foreach (var Url in FileReader.GetURLs(open.FileName)) {
                 CheckURL(Url);
             }
         }
 
-        public async void SavePlayList_Click(object sender, RoutedEventArgs e) {
-            if (queue != null) {
+        public void SavePlayList_Click(object sender, RoutedEventArgs e) {
+            if (queue.Count != 0) {
                 FileReader.Save(queue);
             } else {
                 MessageBox.Show("現在キューに音楽が入っていません。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -326,7 +334,7 @@ namespace JellyParfait {
 
         private async void CheckURL(string youtubeUrl) {
             Searched = youtubeUrl;
-            var progress = await this.ShowProgressAsync("JellyParfait","ダウンロード中...");
+            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...");
             try {
                 var youtube = new YoutubeClient();
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
@@ -337,14 +345,13 @@ namespace JellyParfait {
                 }
                 var count = 0;
                 await foreach (var video in videos) {
-                    count += 1;       
+                    count += 1;
                     progress.SetProgress((float)count / (float)playlistcount);
                     if (queue.Exists(x => x.YoutubeUrl == video.Url)) {
                         var msgbox = MessageBox.Show(this, video.Title + "\n既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (msgbox == MessageBoxResult.No) continue;
-                    }                  
+                    }
                     await Task.Run(() => AddQueue(video.Url));
-                    Debug.Print(playlistcount.ToString());
                 }
 
             } catch (Exception e) {
