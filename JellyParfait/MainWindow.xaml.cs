@@ -1,27 +1,26 @@
-﻿using Microsoft.Win32;
-using JellyParfait.Model;
+﻿using JellyParfait.Model;
+using JellyParfait.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using YoutubeExplode;
-using System.Windows.Data;
-using System.Windows.Controls;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 using YoutubeExplode.Converter;
-using JellyParfait.Windows;
 
 namespace JellyParfait {
     /// <summary>
@@ -168,31 +167,6 @@ namespace JellyParfait {
             await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
-        /*private void Mp3_Click(object sender, RoutedEventArgs e) {
-            var open = new OpenFileDialog() {
-                Title = "mp3ファイルの選択",
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                Filter ="mp3ファイル" + "|*.mp3",
-                Multiselect = false
-            };
-            if (open.ShowDialog() != true) return;
-            queue.Add(new MusicData(this) {
-                QueueId = queue.Count,
-                Title = Path.GetFileNameWithoutExtension(open.FileName),
-                Id = "local",
-                Url = open.FileName,
-                YoutubeUrl = "local",
-                Thumbnails = null,
-                Visibility = Visibility.Hidden,
-                Color = "white",
-            });
-            ReloadListView();
-            if (queue.Count == 1) {
-                nowQueue = 0;
-                PlayMusic(queue[nowQueue]);
-            }
-        }*/
-
         private void Twitter_Click(object sender, RoutedEventArgs e) {
             if (player != null) {
                 if(player.PlaybackState != PlaybackState.Stopped) {
@@ -334,7 +308,7 @@ namespace JellyParfait {
 
         private async void CheckURL(string youtubeUrl) {
             Searched = youtubeUrl;
-            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...");
+            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...",true);
             try {
                 var youtube = new YoutubeClient();
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
@@ -379,8 +353,8 @@ namespace JellyParfait {
                 queue.Add(musicData);
                 Dispatcher.Invoke(() => ReloadListView());
 
-            } catch (AggregateException) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+            } catch (AggregateException e) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)\n"+e.Message,"JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
             }
         }
 
@@ -405,7 +379,14 @@ namespace JellyParfait {
 
                 if (!File.Exists(image)) {
                     using WebClient client = new WebClient();
-                    await Task.Run(() => client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image));
+                    await Task.Run(() => {
+                        try {
+                            client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image);
+                        } catch (WebException) {
+                            client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/sddefault.jpg"), image);
+                        }
+                    });
+
                 }
 
                 return new MusicData(this) {
@@ -417,15 +398,15 @@ namespace JellyParfait {
                     Thumbnails = image,
                     Visibility = Visibility.Hidden,
                     Color = "white",
-                }; ;
-            } catch (System.Net.Http.HttpRequestException) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nキャッシュダウンロード中にエラーが発生しました\nインターネットに接続されているか確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                };
+            } catch (System.Net.Http.HttpRequestException e) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nキャッシュダウンロード中にエラーが発生しました\nインターネットに接続されているか確認してください\n" + e.Message, "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
-            } catch (ArgumentException) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+            } catch (ArgumentException e) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。\n" + e.Message, "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
-            } catch (AggregateException) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+            } catch (AggregateException e) {
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nYoutubeのURLかどうかを確認してください\n" + e.Message, "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
                 return null;
             }/* catch {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n不明なエラーが発生しました。\nURLが正しいか確認した後もう一度やり直してください", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Warning));
@@ -532,10 +513,14 @@ namespace JellyParfait {
         }
 
         public void PlayerDispose() {
-            player.Dispose();
-            player = null;
-            media.Dispose();
-            media = null;
+            if (player != null) {
+                player.Dispose();
+                player = null;
+            }
+            if (media != null) {
+                media.Dispose();
+                media = null;
+            }
             MusicQueueBackground.ImageSource = null;
             ChangeTitle(string.Empty);
             ResetTime();
