@@ -170,12 +170,7 @@ namespace JellyParfait {
         private void Twitter_Click(object sender, RoutedEventArgs e) {
             if (player != null) {
                 if(player.PlaybackState != PlaybackState.Stopped) {
-                    string str;
-                    if (queue[nowQueue].YoutubeUrl == "local") {
-                        str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n#JellyParfait #NowPlaying");
-                    } else {
-                        str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + queue[nowQueue].YoutubeUrl + "\n#JellyParfait #NowPlaying");
-                    }
+                    string str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + queue[nowQueue].YoutubeUrl + "\n#JellyParfait #NowPlaying");
                     Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
                     return;
                 }
@@ -185,8 +180,7 @@ namespace JellyParfait {
 
         private void Equalizer_Click(object sender, RoutedEventArgs e) {
             EqualizerWindow window = new EqualizerWindow(this);
-            window.Owner = this;
-            window.ShowDialog();
+            window.Show();
         }
 
         public async void ReadPlayList_Click(object sender, RoutedEventArgs e) {
@@ -302,7 +296,8 @@ namespace JellyParfait {
         }
 
         private void Search() {
-            if (Searched == searchTextBox.Text) {
+            if (searchTextBox.Text == string.Empty) return;
+            if (searchTextBox.Text == Searched) {
                 var msgbox = MessageBox.Show(this, "現在検索しているようです。もう一度追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (msgbox == MessageBoxResult.No) return;
             }
