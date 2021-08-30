@@ -171,11 +171,10 @@ namespace JellyParfait {
             if (player != null) {
                 if(player.PlaybackState != PlaybackState.Stopped) {
                     string str;
-                    string title = queue[nowQueue].Title.Replace(" ", "%20");
                     if (queue[nowQueue].YoutubeUrl == "local") {
-                        str = "Now%20Playing...%0d「" + title + "」%0d%23JellyParfait%20%23NowPlaying";
+                        str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n#JellyParfait #NowPlaying");
                     } else {
-                        str = "Now%20Playing...%0d「" + title + "」%0d" + queue[nowQueue].YoutubeUrl + "%0d%23JellyParfait%20%23NowPlaying";
+                        str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + queue[nowQueue].YoutubeUrl + "\n#JellyParfait #NowPlaying");
                     }
                     Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
                     return;
@@ -206,6 +205,7 @@ namespace JellyParfait {
                 if (msgbox == MessageDialogResult.Affirmative) Reset();
             }
             foreach (var Url in FileReader.GetURLs(open.FileName)) {
+                Debug.Print(Url);
                 CheckURL(Url);
                 while (Searched != string.Empty) {
                     await Task.Run(()=>Task.Delay(200));
@@ -401,7 +401,7 @@ namespace JellyParfait {
                     Title = video.Title,
                     Id = video.Id,
                     Url = music,
-                    YoutubeUrl = youtubeUrl,
+                    YoutubeUrl = "https://www.youtube.com/watch?v="+video.Id,
                     Thumbnails = image,
                     Visibility = Visibility.Hidden,
                     Color = "white",
