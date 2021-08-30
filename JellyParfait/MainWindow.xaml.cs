@@ -207,6 +207,9 @@ namespace JellyParfait {
             }
             foreach (var Url in FileReader.GetURLs(open.FileName)) {
                 CheckURL(Url);
+                while (Searched != string.Empty) {
+                    await Task.Run(()=>Task.Delay(200));
+                }
             }
         }
 
@@ -225,7 +228,7 @@ namespace JellyParfait {
         private async void SearchTextBox_Loaded(object sender, RoutedEventArgs e) {
             if (first) {
                 var settings = new MetroDialogSettings {
-                    DefaultText = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
+                    //DefaultText = "https://www.youtube.com/watch?list=PL1kIh8ZwhZzKMU8MELWCfveQifBZWUIhi",
                 };
                 var dialog = await this.ShowInputAsync("ようこそJellyParfaitへ！", "youtubeのURLを入力してください！(プレイリストでもOK)\n初回はキャッシュのダウンロードがあるので時間がかかります", settings);
                 if (dialog == null) return;
@@ -383,7 +386,11 @@ namespace JellyParfait {
                         try {
                             client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/maxresdefault.jpg"), image);
                         } catch (WebException) {
-                            client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/sddefault.jpg"), image);
+                            try {
+                                client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/sddefault.jpg"), image);
+                            } catch (WebException) {
+                                client.DownloadFile(new Uri("https://img.youtube.com/vi/" + video.Id + "/default.jpg"), image);
+                            }
                         }
                     });
 
@@ -455,14 +462,18 @@ namespace JellyParfait {
                     Complete = true;
                     while (true) {
                         Thread.Sleep(200);
-                        if (player == null) break;
-                        if (media == null) break;
-                        if (player.PlaybackState == PlaybackState.Paused) continue;
-                        if (player.PlaybackState == PlaybackState.Stopped) break;
-                        if (sliderClick) continue;
-                        if (time != media.CurrentTime) {
-                            Dispatcher.Invoke(() => SetTime(media.CurrentTime));
-                            time = media.CurrentTime;
+                        try {
+                            if (player == null) break;
+                            if (media == null) break;
+                            if (player.PlaybackState == PlaybackState.Paused) continue;
+                            if (player.PlaybackState == PlaybackState.Stopped) break;
+                            if (sliderClick) continue;
+                            if (time != media.CurrentTime) {
+                                Dispatcher.Invoke(() => SetTime(media.CurrentTime));
+                                time = media.CurrentTime;
+                            }
+                        } catch(Exception){
+                            return;
                         }
                     }
                 } catch (System.Runtime.InteropServices.COMException) {
