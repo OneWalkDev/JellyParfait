@@ -262,22 +262,26 @@ namespace JellyParfait {
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
-            sliderClick = true;
-            if (player != null) {
+            if (player == null) {
+                MusicTimeSlider.Value = 0;
+            } else {
+                sliderClick = true;
                 Pause();
                 if (player.PlaybackState == PlaybackState.Paused) {
                     media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
                     Play();
                 }
             }
-            sliderClick = false;
+            
         }
 
         private void MusicTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
-            sliderClick = true;
             if (player == null) {
                 MusicTimeSlider.Value = 0;
+            } else {
+                sliderClick = true;
             }
+
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e) {
@@ -449,7 +453,7 @@ namespace JellyParfait {
             await Task.Run(() => {
                 try {
                     player = new WaveOutEvent() { DesiredLatency = 200 };
-                    media = new AudioFileReader(data.Url);      
+                    media = new AudioFileReader(data.Url);
                     player.Init(new Equalizer(media, bands));
                     player.Volume = volume;
                     Dispatcher.Invoke(() => {
@@ -467,20 +471,26 @@ namespace JellyParfait {
                             if (media == null) break;
                             if (player.PlaybackState == PlaybackState.Paused) continue;
                             if (player.PlaybackState == PlaybackState.Stopped) break;
-                            if (sliderClick) continue;
                             if (time != media.CurrentTime) {
                                 Dispatcher.Invoke(() => SetTime(media.CurrentTime));
                                 time = media.CurrentTime;
                             }
-                        } catch(Exception){
+                            if (sliderClick) {
+                                sliderClick = false;
+                                continue;
+                            }
+                        } catch (Exception) {
+                            sliderClick = false;
                             return;
                         }
                     }
                 } catch (System.Runtime.InteropServices.COMException) {
                     Complete = true;
-                    Dispatcher.Invoke(() => MessageBox.Show("「" + data.Title + "」\n再生エラーが発生しました。\nファイルが破損している可能性があります。キャッシュを消してもう一度試してみてください。", "JellyParfait - Error",MessageBoxButton.OK,MessageBoxImage.Error));
+                    sliderClick = false;
+                    Dispatcher.Invoke(() => MessageBox.Show("「" + data.Title + "」\n再生エラーが発生しました。\nファイルが破損している可能性があります。キャッシュを消してもう一度試してみてください。", "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Error));
                 }
             });
+            sliderClick = false;
             if (!Clicked && player != null) {
                 if (player.PlaybackState != PlaybackState.Paused) Next();
             }
