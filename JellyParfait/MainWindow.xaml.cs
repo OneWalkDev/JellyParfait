@@ -261,16 +261,16 @@ namespace JellyParfait {
             BindingOperations.SetBinding(MusicQueue, ItemsControl.ItemsSourceProperty, myBinding);
         }
 
+        private void MusicTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
+            Debug.Print(sliderClick.ToString());
+        }
+
         private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
             if (player == null) {
                 MusicTimeSlider.Value = 0;
             } else {
                 sliderClick = true;
-                Pause();
-                if (player.PlaybackState == PlaybackState.Paused) {
-                    media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
-                    Play();
-                }
+                media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
             }
             
         }
@@ -471,14 +471,15 @@ namespace JellyParfait {
                             if (media == null) break;
                             if (player.PlaybackState == PlaybackState.Paused) continue;
                             if (player.PlaybackState == PlaybackState.Stopped) break;
-                            if (time != media.CurrentTime) {
-                                Dispatcher.Invoke(() => SetTime(media.CurrentTime));
-                                time = media.CurrentTime;
-                            }
                             if (sliderClick) {
                                 sliderClick = false;
                                 continue;
                             }
+                            if (time != media.CurrentTime) {
+                                Dispatcher.Invoke(() => SetTime(media.CurrentTime));
+                                time = media.CurrentTime;
+                            }
+                            
                         } catch (Exception) {
                             sliderClick = false;
                             return;
@@ -794,6 +795,5 @@ namespace JellyParfait {
         public void ChangeEqualizer(int index,int value) {
             bands[index].Gain = value;
         }
-
     }
 }
