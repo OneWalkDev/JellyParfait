@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -164,7 +165,7 @@ namespace JellyParfait {
         }
 
         public async void Version_Infomation_Click(object sender, RoutedEventArgs e) {
-            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
+            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.1β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
         private void Twitter_Click(object sender, RoutedEventArgs e) {
@@ -198,13 +199,17 @@ namespace JellyParfait {
                 });
                 if (msgbox == MessageDialogResult.Affirmative) Reset();
             }
-            foreach (var Url in FileReader.GetURLs(open.FileName)) {
-                Debug.Print(Url);
-                CheckURL(Url);
-                while (Searched != string.Empty) {
-                    await Task.Run(()=>Task.Delay(200));
+            var fileUrls = FileReader.GetURLs(open.FileName);
+            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...", true);
+            foreach (var Url in fileUrls.Select((value, index) => new { value, index })) {
+                if (queue.Exists(x => x.YoutubeUrl == Url.value)) {
+                    var msgbox = MessageBox.Show(this, "既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (msgbox == MessageBoxResult.No) return;
                 }
+                await Task.Run(() => AddQueue(Url.value));
+                progress.SetProgress((float)Url.index / (float)fileUrls.Count);
             }
+            await progress.CloseAsync();
         }
 
         public void SavePlayList_Click(object sender, RoutedEventArgs e) {

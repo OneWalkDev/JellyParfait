@@ -9,19 +9,14 @@ using System.Windows.Forms;
 namespace JellyParfait {
     class FavoriteTextFile {
         public List<string> GetURLs(string path) {
-            
             string line;
-
             List<string> Urls = new List<string>();
-
             using(StreamReader file = new StreamReader(path)){
                 while ((line = file.ReadLine()) != null) {
                     Urls.Add(line);
                 }
-
                 file.Close();
             }
-
             return Urls;
         }
 
