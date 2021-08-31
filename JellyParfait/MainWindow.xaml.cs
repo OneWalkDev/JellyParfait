@@ -261,10 +261,6 @@ namespace JellyParfait {
             BindingOperations.SetBinding(MusicQueue, ItemsControl.ItemsSourceProperty, myBinding);
         }
 
-        private void MusicTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
-            Debug.Print(sliderClick.ToString());
-        }
-
         private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
             if (player == null) {
                 MusicTimeSlider.Value = 0;
