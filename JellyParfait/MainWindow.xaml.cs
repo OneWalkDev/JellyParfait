@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -92,6 +93,8 @@ namespace JellyParfait {
         /// 押されたマウスのボタンを格納
         /// </summary>
         private MouseButton mouseButton;
+
+        private bool doPlay;
 
         private EqualizerBand[] bands;
 
@@ -261,21 +264,28 @@ namespace JellyParfait {
             BindingOperations.SetBinding(MusicQueue, ItemsControl.ItemsSourceProperty, myBinding);
         }
 
-        private void MusicTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
-            if (player == null) {
-                MusicTimeSlider.Value = 0;
-            } else {
-                sliderClick = true;
-                media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
-            }
-            
+        private void MusicTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
+            Debug.Print(sliderClick.ToString());
         }
 
-        private void MusicTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
+        private void MusicTimeSlider_PreviewMouseUp(object sender, DragCompletedEventArgs e) {
             if (player == null) {
                 MusicTimeSlider.Value = 0;
             } else {
                 sliderClick = true;
+                player.Pause();
+                media.Position = (long)(media.WaveFormat.AverageBytesPerSecond * Math.Floor(MusicTimeSlider.Value));
+                SetTime(media.CurrentTime);
+                doPlay = false;
+            }
+        }
+
+        private void MusicTimeSlider_PreviewMouseDown(object sender, DragStartedEventArgs e) {
+            if (player == null) {
+                MusicTimeSlider.Value = 0;
+            } else {
+                doPlay = true;
+                player.Pause();
             }
 
         }
@@ -461,16 +471,20 @@ namespace JellyParfait {
                     player.Play();
                     Complete = true;
                     while (true) {
-                        Thread.Sleep(200);
+                        Thread.Sleep(500);
                         try {
                             if (player == null) break;
                             if (media == null) break;
-                            if (player.PlaybackState == PlaybackState.Paused) continue;
-                            if (player.PlaybackState == PlaybackState.Stopped) break;
-                            if (sliderClick) {
-                                sliderClick = false;
+                            if (doPlay) continue;
+                            if (player.PlaybackState == PlaybackState.Paused) {
+                                if (!doPlay && sliderClick) {
+                                    sliderClick = false;
+                                    player.Play();
+                                }
                                 continue;
                             }
+                            if (player.PlaybackState == PlaybackState.Stopped) break;
+                            
                             if (time != media.CurrentTime) {
                                 Dispatcher.Invoke(() => SetTime(media.CurrentTime));
                                 time = media.CurrentTime;

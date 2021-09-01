@@ -176,9 +176,12 @@
                     <Grid Grid.Column="2">
                         <Slider x:Name="MusicTimeSlider"
                                         Margin="10,0,10,0"
-                                        PreviewMouseLeftButtonUp="MusicTimeSlider_PreviewMouseUp"
-                                        PreviewMouseLeftButtonDown="MusicTimeSlider_PreviewMouseDown"
-                                        IsMoveToPointEnabled ="True"
+                                        Thumb.DragCompleted="MusicTimeSlider_PreviewMouseUp"
+                                        Thumb.DragStarted="MusicTimeSlider_PreviewMouseDown"
+                                        IsMoveToPointEnabled ="False"
+                                        SmallChange="0"
+                                        LargeChange="0"
+                                        Focusable="False"
                                 />
                     </Grid>
                     <Grid Grid.Column="3">
