@@ -7,10 +7,10 @@
 © [たくまっち](https://twitter.com/xtakumatutix) 
 
 <img src="https://img.shields.io/badge/license-GPL-brightgreen" alt="License">
- <img src="https://img.shields.io/github/languages/code-size/yurisi0212/JellyParfait" alt="size">
  <img src="https://img.shields.io/badge/Platform-Windows-green">
  <img src="https://img.shields.io/github/last-commit/yurisi0212/JellyParfait">
  <img src="https://img.shields.io/github/release-date-pre/yurisi0212/JellyParfait">
+ <img src="https://img.shields.io/github/downloads/yurisi0212/JellyParfait/total">
 </div>
 
 ## 概要 
