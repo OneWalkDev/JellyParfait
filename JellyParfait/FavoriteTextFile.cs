@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace JellyParfait {
     class FavoriteTextFile {
+
         public List<string> GetURLs(string path) {
             string line;
             List<string> Urls = new List<string>();

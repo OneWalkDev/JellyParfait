@@ -1,4 +1,5 @@
-﻿using JellyParfait.Model;
+﻿using DiscordRPC;
+using JellyParfait.Model;
 using JellyParfait.Windows;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -37,7 +38,11 @@ namespace JellyParfait {
 
         private readonly string cachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\cache\";
 
+        private readonly string mp3Path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\mp3\";
+
         private readonly FavoriteTextFile FileReader = new FavoriteTextFile();
+
+        private readonly DiscordRpcClient _discordClient = new DiscordRpcClient("896321734796533760");
 
         /// <summary>
         /// 音楽の情報
@@ -101,6 +106,14 @@ namespace JellyParfait {
 
         public MainWindow() {
             InitializeComponent();
+            _discordClient.Initialize();
+            _discordClient.SetPresence(new RichPresence() {
+                Details = "NOT PLAYING",
+                Timestamps = Timestamps.Now,
+                Assets = new Assets() {
+                    LargeImageKey = "jellyparfait",
+                }
+            });
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
             Directory.CreateDirectory(path+"favorite");
@@ -221,6 +234,37 @@ namespace JellyParfait {
             } else {
                 MessageBox.Show("現在キューに音楽が入っていません。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void Mp3_Click(object sender, RoutedEventArgs e) {
+            var open = new OpenFileDialog() {
+                Title = "mp3ファイルの選択",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                Filter = "mp3ファイル" + "|*.mp3",
+            };
+            if (open.ShowDialog() != true) return;
+
+            File.Copy(open.FileName, mp3Path + Path.GetFileName(open.FileName));
+
+            var data = new MusicData(this) {
+                QueueId = queue.Count,
+                Title = Path.GetFileNameWithoutExtension(open.FileName),
+                Id = "local",
+                Url = mp3Path + Path.GetFileName(open.FileName),
+                YoutubeUrl = mp3Path + Path.GetFileName(open.FileName),
+                Thumbnails = null,
+                Visibility = Visibility.Hidden,
+                Color = "white",
+            };
+           
+
+            queue.Add(data);
+            ReloadListView();
+
+            if (queue.Count == 1) {
+                nowQueue = 0;
+            }
+
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
@@ -469,6 +513,13 @@ namespace JellyParfait {
                     });
                     var time = new TimeSpan(0, 0, 0);
                     player.Play();
+                    _discordClient.SetPresence(new RichPresence() {
+                        Details = data.Title,
+                        Timestamps = Timestamps.Now,
+                        Assets = new Assets() {
+                            LargeImageKey = "jellyparfait",
+                        }
+                    });
                     Complete = true;
                     while (true) {
                         Thread.Sleep(500);
@@ -556,6 +607,13 @@ namespace JellyParfait {
             MusicQueueBackground.ImageSource = null;
             ChangeTitle(string.Empty);
             ResetTime();
+            _discordClient.SetPresence(new RichPresence() {
+                Details = "NOT PLAYING",
+                Timestamps = Timestamps.Now,
+                Assets = new Assets() {
+                    LargeImageKey = "jellyparfait",
+                }
+            });
         }
 
         public void Pause() {
