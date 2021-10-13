@@ -117,6 +117,7 @@ namespace JellyParfait {
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
             Directory.CreateDirectory(path+"favorite");
+            Directory.CreateDirectory(mp3Path);
             bands = new EqualizerBand[]{
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = 0},
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = 0},
@@ -222,9 +223,28 @@ namespace JellyParfait {
                     var msgbox = MessageBox.Show(this, "既に存在しているようです。追加しますか？", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (msgbox == MessageBoxResult.No) return;
                 }
-                await Task.Run(() => AddQueue(Url.value));
+                if (Url.value[0..4] == "http") {
+                    await Task.Run(() => AddQueue(Url.value));
+                } else {
+                    if (File.Exists(Url.value)) {
+                        var data = new MusicData(this) {
+                            QueueId = queue.Count,
+                            Title = Path.GetFileNameWithoutExtension(Url.value),
+                            Id = "local",
+                            Url = Url.value,
+                            YoutubeUrl = Url.value,
+                            Thumbnails = null,
+                            Visibility = Visibility.Hidden,
+                            Color = "white",
+                        };
+                        queue.Add(data);
+                    } else {
+                       MessageBox.Show(this, Url.value + "に音楽は存在しません。", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    }
+                }
                 progress.SetProgress((float)Url.index / (float)fileUrls.Count);
             }
+            ReloadListView();
             await progress.CloseAsync();
         }
 
@@ -241,30 +261,28 @@ namespace JellyParfait {
                 Title = "mp3ファイルの選択",
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 Filter = "mp3ファイル" + "|*.mp3",
+                Multiselect = true,
             };
+
             if (open.ShowDialog() != true) return;
 
-            File.Copy(open.FileName, mp3Path + Path.GetFileName(open.FileName));
+            foreach(var filename in open.FileNames) {
+                if(!File.Exists(mp3Path + Path.GetFileName(filename)))
+                    File.Copy(filename, mp3Path + Path.GetFileName(filename));
 
-            var data = new MusicData(this) {
-                QueueId = queue.Count,
-                Title = Path.GetFileNameWithoutExtension(open.FileName),
-                Id = "local",
-                Url = mp3Path + Path.GetFileName(open.FileName),
-                YoutubeUrl = mp3Path + Path.GetFileName(open.FileName),
-                Thumbnails = null,
-                Visibility = Visibility.Hidden,
-                Color = "white",
-            };
-           
-
-            queue.Add(data);
-            ReloadListView();
-
-            if (queue.Count == 1) {
-                nowQueue = 0;
+                var data = new MusicData(this) {
+                    QueueId = queue.Count,
+                    Title = Path.GetFileNameWithoutExtension(filename),
+                    Id = "local",
+                    Url = mp3Path + Path.GetFileName(filename),
+                    YoutubeUrl = mp3Path + Path.GetFileName(filename),
+                    Thumbnails = null,
+                    Visibility = Visibility.Hidden,
+                    Color = "white",
+                };
+                queue.Add(data);
             }
-
+            ReloadListView();
         }
 
         private void SearchTextBox_PreviewKeyDown(object sender, KeyEventArgs e) {
