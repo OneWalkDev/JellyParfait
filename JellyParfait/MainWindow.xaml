@@ -32,6 +32,7 @@
                     <MenuItem Header="mp3ファイルを読み込み" Click="Mp3_Click"/>
                     <MenuItem Header="再生/一時停止" Click="PlayButton_Click"/>
                     <MenuItem Header="Twitterで共有" Click="Twitter_Click"/>
+                    <MenuItem Header="Discordで共有" IsCheckable="True" x:Name="Discord_Share" Click="Discord_Share_Click" Loaded="Discord_Share_Loaded"/>
                     <MenuItem Header="イコライザ" Click="Equalizer_Click"/>
                 </MenuItem>
                 <MenuItem Header="プレイリスト(_P)">
@@ -240,6 +241,7 @@
                             IsMoveToPointEnabled ="True"
                             Maximum="0.5"
                             Value="0.1"
+                            Loaded="VolumeSlider_Loaded"
                             PreviewMouseLeftButtonUp="VolumeSlider_PreviewMouseUp"
                             SmallChange="0.001"/>
                     </Grid>

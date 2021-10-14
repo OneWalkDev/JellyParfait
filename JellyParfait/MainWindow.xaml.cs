@@ -34,15 +34,15 @@ namespace JellyParfait {
         /// <summary>
         /// フォルダへのパス
         /// </summary>
-        private readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\";
+        public static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\";
 
-        private readonly string cachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\cache\";
+        public static string cachePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\cache\";
 
-        private readonly string mp3Path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\mp3\";
+        public static string mp3Path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\yurisi\JellyParfait\mp3\";
 
         private readonly FavoriteTextFile FileReader = new FavoriteTextFile();
 
-        private readonly DiscordRpcClient _discordClient = new DiscordRpcClient("896321734796533760");
+        private DiscordRpcClient _discordClient = new DiscordRpcClient("896321734796533760");
 
         /// <summary>
         /// 音楽の情報
@@ -103,32 +103,37 @@ namespace JellyParfait {
 
         private EqualizerBand[] bands;
 
+        public ConfigFile _settings;
+
 
         public MainWindow() {
             InitializeComponent();
+            _settings = new ConfigFile();
             _discordClient.Initialize();
-            _discordClient.SetPresence(new RichPresence() {
-                Details = "NOT PLAYING",
-                Timestamps = Timestamps.Now,
-                Assets = new Assets() {
-                    LargeImageKey = "jellyparfait",
-                }
-            });
+            if (_settings.config.DiscordActivity) {
+                _discordClient.SetPresence(new RichPresence() {
+                    Details = "NOT PLAYING",
+                    Timestamps = Timestamps.Now,
+                    Assets = new Assets() {
+                        LargeImageKey = "jellyparfait",
+                    }
+                });
+            }
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
             Directory.CreateDirectory(path+"favorite");
             Directory.CreateDirectory(mp3Path);
             bands = new EqualizerBand[]{
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 125, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 250, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 500, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 1000, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 2000, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 4000, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 8000, Gain = 0},
-                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 12000, Gain = 0},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = _settings.config.EQ_32},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = _settings.config.EQ_64},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 125, Gain = _settings.config.EQ_125},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 250, Gain = _settings.config.EQ_250},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 500, Gain = _settings.config.EQ_500},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 1000, Gain = _settings.config.EQ_1000},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 2000, Gain = _settings.config.EQ_2000},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 4000, Gain = _settings.config.EQ_4000},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 8000, Gain = _settings.config.EQ_8000},
+                    new EqualizerBand {Bandwidth = 0.8f, Frequency = 12000, Gain = _settings.config.EQ_12000},
                 };
 
         }
@@ -143,7 +148,20 @@ namespace JellyParfait {
                 Stop();
                 player.Dispose();
             }
+            _settings.config.Volume = (float)VolumeSlider.Value;
+            _settings.config.EQ_32 = GetEqualizer()[0].Gain;
+            _settings.config.EQ_64 = GetEqualizer()[1].Gain;
+            _settings.config.EQ_125 = GetEqualizer()[2].Gain;
+            _settings.config.EQ_250 = GetEqualizer()[3].Gain;
+            _settings.config.EQ_500 = GetEqualizer()[4].Gain;
+            _settings.config.EQ_1000 = GetEqualizer()[5].Gain;
+            _settings.config.EQ_2000 = GetEqualizer()[6].Gain;
+            _settings.config.EQ_4000 = GetEqualizer()[7].Gain;
+            _settings.config.EQ_8000 = GetEqualizer()[8].Gain;
+            _settings.config.EQ_12000 = GetEqualizer()[9].Gain;
+            _settings.Write();
             App.DeleteNotifyIcon();
+            
         }
 
         private async void Cache_Click(object sender, RoutedEventArgs e) {
@@ -182,7 +200,7 @@ namespace JellyParfait {
         }
 
         public async void Version_Infomation_Click(object sender, RoutedEventArgs e) {
-            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.1β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
+            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.5β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
         private void Twitter_Click(object sender, RoutedEventArgs e) {
@@ -194,6 +212,27 @@ namespace JellyParfait {
                 }
             }
             MessageBox.Show("現在何も再生されていません。","JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        private void Discord_Share_Click(object sender, RoutedEventArgs e) {
+            Discord_Share.IsChecked = !_settings.config.DiscordActivity;
+            _settings.config.DiscordActivity = Discord_Share.IsChecked;
+            if (!_settings.config.DiscordActivity) {
+                _discordClient.Dispose();
+                _discordClient = new DiscordRpcClient("896321734796533760");
+            } else {
+                MessageBox.Show("再起動するか、時間が立たないと表示されない場合があります。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
+                _discordClient.SetPresence(new RichPresence() {
+                    Details = "NOT PLAYING",
+                    Timestamps = Timestamps.Now,
+                    Assets = new Assets() {
+                        LargeImageKey = "jellyparfait",
+                    }
+                });
+            }
+        }
+
+        private void Discord_Share_Loaded(object sender, RoutedEventArgs e) {
+            Discord_Share.IsChecked = _settings.config.DiscordActivity;
         }
 
         private void Equalizer_Click(object sender, RoutedEventArgs e) {
@@ -349,7 +388,6 @@ namespace JellyParfait {
                 doPlay = true;
                 player.Pause();
             }
-
         }
 
         private void PrevButton_Click(object sender, RoutedEventArgs e) {
@@ -370,6 +408,9 @@ namespace JellyParfait {
             if (player != null) {
                 player.Volume = (float)VolumeSlider.Value;
             }
+        }
+        private void VolumeSlider_Loaded(object sender, RoutedEventArgs e) {
+            VolumeSlider.Value = _settings.config.Volume;
         }
 
         private void Search() {
@@ -531,13 +572,15 @@ namespace JellyParfait {
                     });
                     var time = new TimeSpan(0, 0, 0);
                     player.Play();
-                    _discordClient.SetPresence(new RichPresence() {
-                        Details = data.Title,
-                        Timestamps = Timestamps.Now,
-                        Assets = new Assets() {
-                            LargeImageKey = "jellyparfait",
-                        }
-                    });
+                    if (_settings.config.DiscordActivity) {
+                        _discordClient.SetPresence(new RichPresence() {
+                            Details = data.Title,
+                            Timestamps = Timestamps.Now,
+                            Assets = new Assets() {
+                                LargeImageKey = "jellyparfait",
+                            }
+                        });
+                    }
                     Complete = true;
                     while (true) {
                         Thread.Sleep(500);
@@ -881,5 +924,6 @@ namespace JellyParfait {
         public void ChangeEqualizer(int index,int value) {
             bands[index].Gain = value;
         }
+
     }
 }

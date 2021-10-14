@@ -18,6 +18,8 @@ namespace JellyParfait.Windows {
         public EqualizerWindow(MainWindow window) {
             InitializeComponent();
             this.window = window;
+            var config = window._settings.config;
+            EqualizerValue = new int[10] { (int)config.EQ_32, (int)config.EQ_64, (int)config.EQ_125, (int)config.EQ_250, (int)config.EQ_500, (int)config.EQ_1000, (int)config.EQ_2000, (int)config.EQ_4000, (int)config.EQ_8000, (int)config.EQ_12000 };
         }
 
         private void TextBlock_Loaded(object sender, RoutedEventArgs e) {
