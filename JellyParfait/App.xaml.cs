@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
 
 
@@ -12,6 +15,15 @@ namespace JellyParfait {
         private static System.Windows.Forms.NotifyIcon notifyIcon;
 
         private void Application_Startup(object sender, StartupEventArgs e) {
+            
+            Mutex mutex_ = new Mutex(false, "JellyParfait");
+            if (!mutex_.WaitOne(0, false)) {
+                MessageBox.Show("JellyParfaitはすでに起動しています。\n見当たらない場合はタスクトレイに格納されています。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Shutdown();
+                mutex_.Dispose();
+                DeleteNotifyIcon();
+                return;
+            }
             mainWindow = new MainWindow();
             mainWindow.Show();
         }
@@ -57,6 +69,14 @@ namespace JellyParfait {
         public static void DeleteNotifyIcon() {
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e) {
+            Mutex mutex_;
+            if (Mutex.TryOpenExisting("JellyParfait", out mutex_)) {
+                mutex_.ReleaseMutex();
+                mutex_.Dispose();
+            }
         }
     }
 }
