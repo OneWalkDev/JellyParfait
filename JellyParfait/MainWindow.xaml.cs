@@ -159,6 +159,7 @@ namespace JellyParfait {
             _settings.config.EQ_4000 = GetEqualizer()[7].Gain;
             _settings.config.EQ_8000 = GetEqualizer()[8].Gain;
             _settings.config.EQ_12000 = GetEqualizer()[9].Gain;
+            _settings.config.DiscordActivity = Discord_Share.IsChecked;
             _settings.Write();
             App.DeleteNotifyIcon();
             
@@ -200,7 +201,7 @@ namespace JellyParfait {
         }
 
         public async void Version_Infomation_Click(object sender, RoutedEventArgs e) {
-            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.6β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
+            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.6.1β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
         private void Twitter_Click(object sender, RoutedEventArgs e) {
