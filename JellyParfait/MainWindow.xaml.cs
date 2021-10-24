@@ -425,7 +425,7 @@ namespace JellyParfait {
 
         private async void CheckURL(string youtubeUrl) {
             Searched = youtubeUrl;
-            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...",true);
+            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...(時間がかかる場合があります。)",true);
             try {
                 var youtube = new YoutubeClient();
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
@@ -434,8 +434,10 @@ namespace JellyParfait {
                 await foreach (var video in videos) {
                     playlistcount += 1;
                 }
+                Debug.Print("a");
                 var count = 0;
                 await foreach (var video in videos) {
+                    Debug.Print("b");
                     count += 1;
                     progress.SetProgress((float)count / (float)playlistcount);
                     if (queue.Exists(x => x.YoutubeUrl == video.Url)) {
@@ -443,6 +445,7 @@ namespace JellyParfait {
                         if (msgbox == MessageBoxResult.No) continue;
                     }
                     await Task.Run(() => AddQueue(video.Url));
+                    Debug.Print("c");
                 }
 
             } catch (Exception e) {
@@ -464,6 +467,7 @@ namespace JellyParfait {
             try {
                 MusicData musicData = null;
                 musicData =  GetVideoObject(youtubeUrl).Result;
+                Debug.Print("d");
                 if (musicData == null) return;
                 if (musicData.Url == string.Empty) return;
 
@@ -479,6 +483,7 @@ namespace JellyParfait {
             try {
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
+                Debug.Print("e");
                 var music = cachePath + video.Id + ".mp3";
                 var image = cachePath + video.Id + ".jpg";
 
@@ -491,7 +496,9 @@ namespace JellyParfait {
                         });
                         if (result) return null;
                     }
-                    await youtubeClient.Videos.DownloadAsync(youtubeUrl, music);
+                    Debug.Print("z");
+                    await youtubeClient.Videos.DownloadAsync(video.Id, music);
+                    Debug.Print("f");
                 }
 
                 if (!File.Exists(image)) {
@@ -507,6 +514,7 @@ namespace JellyParfait {
                             }
                         }
                     });
+                    Debug.Print("g");
 
                 }
 
@@ -521,7 +529,12 @@ namespace JellyParfait {
                     Color = "white",
                 };
             } catch (System.Net.Http.HttpRequestException e) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nキャッシュダウンロード中にエラーが発生しました\nインターネットに接続されているか確認してください\n" + e.Message, "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                await Dispatcher.Invoke(async () => {
+                    var msgbox = MessageBox.Show(this, "Error\nキャッシュダウンロード中にエラーが発生しました\nインターネットに接続されているか確認してください\n再ダウンロードしますか？" + e.Message, "JellyParfait - Error", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                    if(msgbox == MessageBoxResult.OK) {
+                        await Task.Run(() => GetVideoObject(youtubeUrl));
+                    }
+                });
                 return null;
             } catch (ArgumentException e) {
                 Dispatcher.Invoke(() => MessageBox.Show(this, "Error\nURLの形式が間違っています。\n" + e.Message, "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
@@ -575,7 +588,7 @@ namespace JellyParfait {
                     player.Play();
                     if (_settings.config.DiscordActivity) {
                         _discordClient.SetPresence(new RichPresence() {
-                            Details = data.Title,
+                            Details = data.Title[1..50],
                             Timestamps = Timestamps.Now,
                             Assets = new Assets() {
                                 LargeImageKey = "jellyparfait",
