@@ -108,6 +108,10 @@ namespace JellyParfait {
 
         public MainWindow() {
             InitializeComponent();
+            if (!Directory.Exists(cachePath)) first = true;
+            Directory.CreateDirectory(cachePath);
+            Directory.CreateDirectory(path+"favorite");
+            Directory.CreateDirectory(mp3Path);
             _settings = new ConfigFile();
             _discordClient.Initialize();
             if (_settings.config.DiscordActivity) {
@@ -119,10 +123,6 @@ namespace JellyParfait {
                     }
                 });
             }
-            if (!Directory.Exists(cachePath)) first = true;
-            Directory.CreateDirectory(cachePath);
-            Directory.CreateDirectory(path+"favorite");
-            Directory.CreateDirectory(mp3Path);
             bands = new EqualizerBand[]{
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = _settings.config.EQ_32},
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = _settings.config.EQ_64},
