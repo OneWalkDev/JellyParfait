@@ -367,7 +367,7 @@ namespace JellyParfait {
         }
 
         private void MusicTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
-            Debug.Print(sliderClick.ToString());
+            //Debug.Print(sliderClick.ToString());
         }
 
         private void MusicTimeSlider_PreviewMouseUp(object sender, DragCompletedEventArgs e) {
@@ -434,10 +434,8 @@ namespace JellyParfait {
                 await foreach (var video in videos) {
                     playlistcount += 1;
                 }
-                Debug.Print("a");
                 var count = 0;
                 await foreach (var video in videos) {
-                    Debug.Print("b");
                     count += 1;
                     progress.SetProgress((float)count / (float)playlistcount);
                     if (queue.Exists(x => x.YoutubeUrl == video.Url)) {
@@ -445,7 +443,6 @@ namespace JellyParfait {
                         if (msgbox == MessageBoxResult.No) continue;
                     }
                     await Task.Run(() => AddQueue(video.Url));
-                    Debug.Print("c");
                 }
 
             } catch (Exception e) {
@@ -467,7 +464,6 @@ namespace JellyParfait {
             try {
                 MusicData musicData = null;
                 musicData =  GetVideoObject(youtubeUrl).Result;
-                Debug.Print("d");
                 if (musicData == null) return;
                 if (musicData.Url == string.Empty) return;
 
@@ -483,7 +479,6 @@ namespace JellyParfait {
             try {
                 var youtubeClient = new YoutubeClient();
                 var video = await youtubeClient.Videos.GetAsync(youtubeUrl);
-                Debug.Print("e");
                 var music = cachePath + video.Id + ".mp3";
                 var image = cachePath + video.Id + ".jpg";
 
@@ -496,9 +491,7 @@ namespace JellyParfait {
                         });
                         if (result) return null;
                     }
-                    Debug.Print("z");
                     await youtubeClient.Videos.DownloadAsync(video.Id, music);
-                    Debug.Print("f");
                 }
 
                 if (!File.Exists(image)) {
@@ -514,8 +507,6 @@ namespace JellyParfait {
                             }
                         }
                     });
-                    Debug.Print("g");
-
                 }
 
                 return new MusicData(this) {
@@ -586,7 +577,6 @@ namespace JellyParfait {
                     });
                     var time = new TimeSpan(0, 0, 0);
                     player.Play();
-                    Debug.Print(queue[nowQueue].Title);
                     var discord_title = data.Title.Length > 50 ? data.Title[1..50] : data.Title;
                     if (_settings.config.DiscordActivity) {
                         _discordClient.SetPresence(new RichPresence() {
