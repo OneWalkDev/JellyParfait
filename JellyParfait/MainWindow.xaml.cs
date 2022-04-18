@@ -586,9 +586,11 @@ namespace JellyParfait {
                     });
                     var time = new TimeSpan(0, 0, 0);
                     player.Play();
+                    Debug.Print(queue[nowQueue].Title);
+                    var discord_title = data.Title.Length > 50 ? data.Title[1..50] : data.Title;
                     if (_settings.config.DiscordActivity) {
                         _discordClient.SetPresence(new RichPresence() {
-                            Details = data.Title[1..50],
+                            Details = discord_title,
                             Timestamps = Timestamps.Now,
                             Assets = new Assets() {
                                 LargeImageKey = "jellyparfait",
