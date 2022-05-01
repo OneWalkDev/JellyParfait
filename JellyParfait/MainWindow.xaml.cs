@@ -201,13 +201,19 @@ namespace JellyParfait {
         }
 
         public async void Version_Infomation_Click(object sender, RoutedEventArgs e) {
-            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.6.1β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
+            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.8β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
         private void Twitter_Click(object sender, RoutedEventArgs e) {
             if (player != null) {
                 if(player.PlaybackState != PlaybackState.Stopped) {
-                    string str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + queue[nowQueue].YoutubeUrl + "\n#JellyParfait #NowPlaying");
+                    string str;
+                    if (queue[nowQueue].Id == "local") {
+                        str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + "#JellyParfait #NowPlaying");
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
+                        return;
+                    }
+                    str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + queue[nowQueue].YoutubeUrl + "\n#JellyParfait #NowPlaying");
                     Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
                     return;
                 }
@@ -407,7 +413,7 @@ namespace JellyParfait {
 
         private void VolumeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e) {
             if (player != null) {
-                player.Volume = (float)VolumeSlider.Value;
+                player.Volume = (float)(VolumeSlider.Value * 0.025);
             }
         }
         private void VolumeSlider_Loaded(object sender, RoutedEventArgs e) {
