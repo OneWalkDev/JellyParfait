@@ -110,19 +110,11 @@ namespace JellyParfait {
             InitializeComponent();
             if (!Directory.Exists(cachePath)) first = true;
             Directory.CreateDirectory(cachePath);
-            Directory.CreateDirectory(path+"favorite");
+            Directory.CreateDirectory(path + "favorite");
             Directory.CreateDirectory(mp3Path);
             _settings = new ConfigFile();
             _discordClient.Initialize();
-            if (_settings.config.DiscordActivity) {
-                _discordClient.SetPresence(new RichPresence() {
-                    Details = "NOT PLAYING",
-                    Timestamps = Timestamps.Now,
-                    Assets = new Assets() {
-                        LargeImageKey = "jellyparfait",
-                    }
-                });
-            }
+            ResetRichPrecense();
             bands = new EqualizerBand[]{
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 32, Gain = _settings.config.EQ_32},
                     new EqualizerBand {Bandwidth = 0.8f, Frequency = 64, Gain = _settings.config.EQ_64},
@@ -162,7 +154,7 @@ namespace JellyParfait {
             _settings.config.DiscordActivity = Discord_Share.IsChecked;
             _settings.Write();
             App.DeleteNotifyIcon();
-            
+
         }
 
         private async void Cache_Click(object sender, RoutedEventArgs e) {
@@ -171,8 +163,8 @@ namespace JellyParfait {
                 return;
             }
             var Directory = new DirectoryInfo(cachePath);
-            double FilesSize = GetDirectorySize(Directory);         
-            var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約"+FilesSize.ToString()+"MBです\n削除しますか？\n(再生中は音楽が停止し、キューがリセットされます)", MessageDialogStyle.AffirmativeAndNegative,new MetroDialogSettings() {
+            double FilesSize = GetDirectorySize(Directory);
+            var msgbox = await this.ShowMessageAsync("JellyParfait", "現在のキャッシュは約" + FilesSize.ToString() + "MBです\n削除しますか？\n(再生中は音楽が停止し、キューがリセットされます)", MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings() {
                 AffirmativeButtonText = "はい",
                 NegativeButtonText = "いいえ"
             });
@@ -201,24 +193,24 @@ namespace JellyParfait {
         }
 
         public async void Version_Infomation_Click(object sender, RoutedEventArgs e) {
-            await this.ShowMessageAsync("JellyParfait","JellyParfait version 0.9.8β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
+            await this.ShowMessageAsync("JellyParfait", "JellyParfait version 0.9.8β\n\nCopylight(C)2021 yurisi\nAll rights reserved.\n\n本ソフトウェアはオープンソースソフトウェアです。\nGPL-3.0 Licenseに基づき誰でも複製や改変ができます。\n\nGithub\nhttps://github.com/yurisi0212/JellyParfait"); ;
         }
 
         private void Twitter_Click(object sender, RoutedEventArgs e) {
             if (player != null) {
-                if(player.PlaybackState != PlaybackState.Stopped) {
+                if (player.PlaybackState != PlaybackState.Stopped) {
                     string str;
                     if (queue[nowQueue].Id == "local") {
                         str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + "#JellyParfait #NowPlaying");
-                        Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true });
                         return;
                     }
                     str = WebUtility.UrlEncode("Now Playing...\n「" + queue[nowQueue].Title + "」\n" + queue[nowQueue].YoutubeUrl + "\n#JellyParfait #NowPlaying");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true});
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start https://twitter.com/intent/tweet?text=" + str) { CreateNoWindow = true });
                     return;
                 }
             }
-            MessageBox.Show("現在何も再生されていません。","JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("現在何も再生されていません。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         private void Discord_Share_Click(object sender, RoutedEventArgs e) {
             Discord_Share.IsChecked = !_settings.config.DiscordActivity;
@@ -228,13 +220,7 @@ namespace JellyParfait {
                 _discordClient = new DiscordRpcClient("896321734796533760");
             } else {
                 MessageBox.Show("再起動するか、時間が立たないと表示されない場合があります。", "JellyParfait", MessageBoxButton.OK, MessageBoxImage.Information);
-                _discordClient.SetPresence(new RichPresence() {
-                    Details = "NOT PLAYING",
-                    Timestamps = Timestamps.Now,
-                    Assets = new Assets() {
-                        LargeImageKey = "jellyparfait",
-                    }
-                });
+                ResetRichPrecense();
             }
         }
 
@@ -285,7 +271,7 @@ namespace JellyParfait {
                         };
                         queue.Add(data);
                     } else {
-                       MessageBox.Show(this, Url.value + "に音楽は存在しません。", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        MessageBox.Show(this, Url.value + "に音楽は存在しません。", "JellyParfait", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     }
                 }
                 progress.SetProgress((float)Url.index / (float)fileUrls.Count);
@@ -312,8 +298,8 @@ namespace JellyParfait {
 
             if (open.ShowDialog() != true) return;
 
-            foreach(var filename in open.FileNames) {
-                if(!File.Exists(mp3Path + Path.GetFileName(filename)))
+            foreach (var filename in open.FileNames) {
+                if (!File.Exists(mp3Path + Path.GetFileName(filename)))
                     File.Copy(filename, mp3Path + Path.GetFileName(filename));
 
                 var data = new MusicData(this) {
@@ -431,7 +417,7 @@ namespace JellyParfait {
 
         private async void CheckURL(string youtubeUrl) {
             Searched = youtubeUrl;
-            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...(時間がかかる場合があります。)",true);
+            var progress = await this.ShowProgressAsync("JellyParfait", "ダウンロード中...(時間がかかる場合があります。)", true);
             try {
                 var youtube = new YoutubeClient();
                 var playlist = await youtube.Playlists.GetAsync(youtubeUrl);
@@ -469,7 +455,7 @@ namespace JellyParfait {
         private void AddQueue(string youtubeUrl) {
             try {
                 MusicData musicData = null;
-                musicData =  GetVideoObject(youtubeUrl).Result;
+                musicData = GetVideoObject(youtubeUrl).Result;
                 if (musicData == null) return;
                 if (musicData.Url == string.Empty) return;
 
@@ -477,7 +463,7 @@ namespace JellyParfait {
                 Dispatcher.Invoke(() => ReloadListView());
 
             } catch (AggregateException e) {
-                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)\n"+e.Message,"JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
+                Dispatcher.Invoke(() => MessageBox.Show(this, "Error\n有効な動画ではありませんでした。(ライブ配信は対応していません。)\n" + e.Message, "JellyParfait - Error", MessageBoxButton.OK, MessageBoxImage.Warning));
             }
         }
 
@@ -520,7 +506,7 @@ namespace JellyParfait {
                     Title = video.Title,
                     Id = video.Id,
                     Url = music,
-                    YoutubeUrl = "https://www.youtube.com/watch?v="+video.Id,
+                    YoutubeUrl = "https://www.youtube.com/watch?v=" + video.Id,
                     Thumbnails = image,
                     Visibility = Visibility.Hidden,
                     Color = "white",
@@ -528,7 +514,7 @@ namespace JellyParfait {
             } catch (System.Net.Http.HttpRequestException e) {
                 await Dispatcher.Invoke(async () => {
                     var msgbox = MessageBox.Show(this, "Error\nキャッシュダウンロード中にエラーが発生しました\nインターネットに接続されているか確認してください\n再ダウンロードしますか？" + e.Message, "JellyParfait - Error", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-                    if(msgbox == MessageBoxResult.OK) {
+                    if (msgbox == MessageBoxResult.OK) {
                         await Task.Run(() => GetVideoObject(youtubeUrl));
                     }
                 });
@@ -568,14 +554,14 @@ namespace JellyParfait {
             } else {
                 MusicQueueBackground.ImageSource = null;
             }
-            var volume = (float)VolumeSlider.Value;
+            var volume = VolumeSlider.Value;
 
             await Task.Run(() => {
                 try {
                     player = new WaveOutEvent() { DesiredLatency = 200 };
                     media = new AudioFileReader(data.Url);
                     player.Init(new Equalizer(media, bands));
-                    player.Volume = volume;
+                    player.Volume = (float)(volume * 0.025);
                     Dispatcher.Invoke(() => {
                         ResetTime();
                         SetSliderTimeLabel(media.TotalTime);
@@ -583,10 +569,11 @@ namespace JellyParfait {
                     });
                     var time = new TimeSpan(0, 0, 0);
                     player.Play();
-                    var discord_title = data.Title.Length > 50 ? data.Title[1..50] : data.Title;
+                    var discord_title = data.Title.Length > 50 ? data.Title[0..49] : data.Title;
                     if (_settings.config.DiscordActivity) {
                         _discordClient.SetPresence(new RichPresence() {
                             Details = discord_title,
+                            State = "♫再生中♫",
                             Timestamps = Timestamps.Now,
                             Assets = new Assets() {
                                 LargeImageKey = "jellyparfait",
@@ -608,12 +595,12 @@ namespace JellyParfait {
                                 continue;
                             }
                             if (player.PlaybackState == PlaybackState.Stopped) break;
-                            
+
                             if (time != media.CurrentTime) {
                                 Dispatcher.Invoke(() => SetTime(media.CurrentTime));
                                 time = media.CurrentTime;
                             }
-                            
+
                         } catch (Exception) {
                             sliderClick = false;
                             return;
@@ -639,6 +626,17 @@ namespace JellyParfait {
         public void Play() {
             if (player != null) {
                 player.Play();
+                if (_settings.config.DiscordActivity) {
+                    var discord_title = queue[nowQueue].Title.Length > 50 ? queue[nowQueue].Title[0..49] : queue[nowQueue].Title;
+                    _discordClient.SetPresence(new RichPresence() {
+                        Details = discord_title,
+                        State = "♫再生中♫",
+                        Timestamps = Timestamps.Now,
+                        Assets = new Assets() {
+                            LargeImageKey = "jellyparfait",
+                        }
+                    });
+                }
                 PlayButton.Content = Resources["Pause"];
             }
         }
@@ -663,6 +661,7 @@ namespace JellyParfait {
             MusicQueueBackground.ImageSource = null;
             ChangeTitle(string.Empty);
             ResetTime();
+            ResetRichPrecense();
             PlayButton.Content = Resources["Play"];
             ReloadListView();
             nowQueue = -1;
@@ -680,18 +679,23 @@ namespace JellyParfait {
             MusicQueueBackground.ImageSource = null;
             ChangeTitle(string.Empty);
             ResetTime();
-            _discordClient.SetPresence(new RichPresence() {
-                Details = "NOT PLAYING",
-                Timestamps = Timestamps.Now,
-                Assets = new Assets() {
-                    LargeImageKey = "jellyparfait",
-                }
-            });
+            ResetRichPrecense();
         }
 
         public void Pause() {
             if (player != null) {
                 player.Pause();
+                if (_settings.config.DiscordActivity) {
+                    var discord_title = queue[nowQueue].Title.Length > 50 ? queue[nowQueue].Title[0..49] : queue[nowQueue].Title;
+                    _discordClient.SetPresence(new RichPresence() {
+                        Details = discord_title,
+                        State = "一時停止中",
+                        Timestamps = Timestamps.Now,
+                        Assets = new Assets() {
+                            LargeImageKey = "jellyparfait",
+                        }
+                    });
+                }
                 PlayButton.Content = Resources["Play"];
             }
         }
@@ -821,7 +825,7 @@ namespace JellyParfait {
             MusicTimeSlider.Value = 0;
             MusicTimeSlider.Maximum = totalSec;
         }
-   
+
         public async void SetQueue(int num) {
             if (Clicked) return;
             if (IsPlay()) Stop();
@@ -918,8 +922,8 @@ namespace JellyParfait {
                 DirectorySize += fi.Length;
             }
             if (DirectorySize != 0) {
-                DirectorySize = Math.Round(DirectorySize / 1024 / 1024,1,MidpointRounding.AwayFromZero);
-                
+                DirectorySize = Math.Round(DirectorySize / 1024 / 1024, 1, MidpointRounding.AwayFromZero);
+
             }
             return DirectorySize;
         }
@@ -933,8 +937,21 @@ namespace JellyParfait {
             return bands;
         }
 
-        public void ChangeEqualizer(int index,int value) {
+        public void ChangeEqualizer(int index, int value) {
             bands[index].Gain = value;
+        }
+
+        private void ResetRichPrecense() {
+            if (_settings.config.DiscordActivity) {
+                _discordClient.SetPresence(new RichPresence() {
+                    Details = "NOT PLAYING",
+
+                    Timestamps = Timestamps.Now,
+                    Assets = new Assets() {
+                        LargeImageKey = "jellyparfait",
+                    }
+                });
+            }
         }
 
     }
