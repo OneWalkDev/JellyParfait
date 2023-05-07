@@ -15,7 +15,7 @@
 少ないメモリのパソコンや、あまり無駄にメモリを消費したくないゲーム中などにこのソフトが効果を発揮します！</Description>
     <Copyright>yurisi</Copyright>
     <StartupObject />
-    <Version>0.9.9</Version>
+    <Version>0.9.9.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
