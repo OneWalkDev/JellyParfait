@@ -569,7 +569,7 @@ namespace JellyParfait {
                     });
                     var time = new TimeSpan(0, 0, 0);
                     player.Play();
-                    var discord_title = data.Title.Length > 50 ? data.Title[0..49] : data.Title;
+                    var discord_title = data.Title.Length > 40 ? data.Title[0..40] : data.Title;
                     if (_settings.config.DiscordActivity) {
                         _discordClient.SetPresence(new RichPresence() {
                             Details = discord_title,
