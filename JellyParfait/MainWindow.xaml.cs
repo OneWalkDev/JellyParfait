@@ -627,7 +627,7 @@ namespace JellyParfait {
             if (player != null) {
                 player.Play();
                 if (_settings.config.DiscordActivity) {
-                    var discord_title = queue[nowQueue].Title.Length > 50 ? queue[nowQueue].Title[0..49] : queue[nowQueue].Title;
+                    var discord_title = queue[nowQueue].Title.Length > 40 ? queue[nowQueue].Title[0..40] : queue[nowQueue].Title;
                     _discordClient.SetPresence(new RichPresence() {
                         Details = discord_title,
                         State = "♫再生中♫",
@@ -686,7 +686,7 @@ namespace JellyParfait {
             if (player != null) {
                 player.Pause();
                 if (_settings.config.DiscordActivity) {
-                    var discord_title = queue[nowQueue].Title.Length > 50 ? queue[nowQueue].Title[0..49] : queue[nowQueue].Title;
+                    var discord_title = queue[nowQueue].Title.Length > 40 ? queue[nowQueue].Title[0..40] : queue[nowQueue].Title;
                     _discordClient.SetPresence(new RichPresence() {
                         Details = discord_title,
                         State = "一時停止中",
